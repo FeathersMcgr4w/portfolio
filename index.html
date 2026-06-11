@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilex:ital,wght@0,100..700;1,100..700&family=Wallpoet&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="general_style.css">
+<title>David Padron</title>
+</head>
+<body>
+  <div class="main-container">
+    <nav class="navbar">
+      <div class="header-icon"></div>
+
+      <div class="nav-links">
+        <a href="#aboutme">AboutMe</a>
+        <a href="#stack">Stack</a>
+        <a href="#projects">Projects</a>
+        <a href="#certs">Certs</a>
+        <a href="#events">Events</a>
+        <a href="#myblog">MyBlog</a>
+      </div>
+
+      <div class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+    <div class="decorative-line"></div>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#aboutme">AboutMe</a>
+      <a href="#stack">Stack</a>
+      <a href="#projects">Projects</a>
+      <a href="#certs">Certs</a>
+      <a href="#events">Events</a>
+      <a href="#myblog">MyBlog</a>
+    </div>
+
+    <!--GRID TUNNEL-->
+    <div class="grid-tunner">
+      <div class="scene">
+        <div class="tunnel">
+          <div class="wall floor"></div>
+          <div class="wall ceiling"></div>
+          <div class="wall left"></div>
+          <div class="wall right"></div>
+          <div class="center-hole"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO CONTENT -->
+    <div class="hero-overlay">
+      <div>
+        <img src="img/icon/icon.svg" alt="logo" class="hero-logo">
+      </div>
+
+      <div class="hero-title-container">
+        <h1 class="hero-title">David Padron</h1>
+        <p class="hero-subtitle">
+          Cyber Threat Intelligence | OSINT Pentester | Ethical Hacking
+        </p>
+      </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="border-box-container">
+      <!-- TORUS GEOMETRY -->
+      <div class="border-box-1">
+        <img src="img/abstract_geometry/abstract_geometric_torus.svg" alt="abstract-torus-geometry" class="torus-geometry">
+      </div>
+      <!-- Identidad Digital -->
+      <div class="border-box-2">
+        <div class="human-wireframe-box">
+          <img src="/img/abstract_geometry/human_wireframe.svg" alt="digital-identity" class="digital-identity-icon">
+          <div class="scanner-noise"></div>
+          <div class="scanner-lines"></div>
+        </div>
+          <div class="border-box-2-text">
+            <h2 class="border-box-2-title"># Tu Identidad Digital</h2>
+            <br>
+            <p>IP: <span id="visitor-ip" class="identity-loading">SCANNING...</span></p>
+            <p>Ubicación: <span id="visitor-location" class="identity-loading">SCANNING...</span>
+            </p>
+            <p>Navegador: <span id="visitor-browser" class="identity-loading">SCANNING...</span></p>
+            <p>Máquina: <span id="visitor-os" class="identity-loading">SCANNING...</span></p>
+            <p>Idioma: <span id="visitor-language" class="identity-loading">SCANNING...</span></p>
+          </div>
+      </div>
+    </div>
+    
+    <br>
+    <br>
+    <!-- ABOUTME DROP DOWN -->
+    <div class="decorative-line"></div>
+    <div class="cyber-dropdown" id="aboutme">
+      <!-- HEADER -->
+        <div class="cyber-header">
+          <!-- TERMINAL -->
+          <div class="terminal-box">
+            <div class="prompt">
+              ┏━[feathers@mcgr4w]-[~/]
+            </div>
+            <div class="command-line-arrow">
+              ┗━>
+              <span class="command-line" style="--chars:7">aboutme</span>
+            </div>
+          </div>
+          <!-- BOTON -->
+          <button class="dropdown-btn">
+            OPEN PROFILE
+          </button>
+        </div>
+
+        <!-- DROPDOWN -->
+        <div class="dropdown-content">
+          <div class="dropdown-inner">
+            <div class="description-box-1">
+              <p>Analista de Cyber Threat Intelligence con experiencia en OSINT ofensivo, reconocimiento avanzado sobre superficie de ataque y trabajo en conjunto con equipos de Red Team para auditorias, pentesting web y ciberinteligencia.</p>
+              <p>Especializado en la recolección de información con fuentes abiertas (OSINT) y cerradas, mapeo de infraestructuras web, identificación de vectores de ataque y clasificación con CVE.</p>
+              <p>Desarrollo de herramientas personalizadas en Bash y Python para explotar vulnerabilidades, ejecutar scraping de datos y scripting automatizado. Ejecuto tareas de inteligencia corporativa, investigación de personas, huella digital, inteligencia de imágenes (IMINT), redes sociales (SOCMINT), monitoreo de campañas de phishing y filtraciones en foros para protección de marca corporativa.</p>
+            </div>
+            <div class="description-box-2">
+              <div><img src="/img/profile/profile_img.png" alt="profile_img" class="profile_img"></div>
+              <div class="social-box">
+                <a href="https://linkedin.com/in/david-padron-9a74aa323"><svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="#2cf5a9" d="M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z"/></svg></a>
+                <a href="https://github.com/FeathersMcgr4w"><svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="#2cf5a9" d="M237.9 461.4C237.9 463.4 235.6 465 232.7 465C229.4 465.3 227.1 463.7 227.1 461.4C227.1 459.4 229.4 457.8 232.3 457.8C235.3 457.5 237.9 459.1 237.9 461.4zM206.8 456.9C206.1 458.9 208.1 461.2 211.1 461.8C213.7 462.8 216.7 461.8 217.3 459.8C217.9 457.8 216 455.5 213 454.6C210.4 453.9 207.5 454.9 206.8 456.9zM251 455.2C248.1 455.9 246.1 457.8 246.4 460.1C246.7 462.1 249.3 463.4 252.3 462.7C255.2 462 257.2 460.1 256.9 458.1C256.6 456.2 253.9 454.9 251 455.2zM316.8 72C178.1 72 72 177.3 72 316C72 426.9 141.8 521.8 241.5 555.2C254.3 557.5 258.8 549.6 258.8 543.1C258.8 536.9 258.5 502.7 258.5 481.7C258.5 481.7 188.5 496.7 173.8 451.9C173.8 451.9 162.4 422.8 146 415.3C146 415.3 123.1 399.6 147.6 399.9C147.6 399.9 172.5 401.9 186.2 425.7C208.1 464.3 244.8 453.2 259.1 446.6C261.4 430.6 267.9 419.5 275.1 412.9C219.2 406.7 162.8 398.6 162.8 302.4C162.8 274.9 170.4 261.1 186.4 243.5C183.8 237 175.3 210.2 189 175.6C209.9 169.1 258 202.6 258 202.6C278 197 299.5 194.1 320.8 194.1C342.1 194.1 363.6 197 383.6 202.6C383.6 202.6 431.7 169 452.6 175.6C466.3 210.3 457.8 237 455.2 243.5C471.2 261.2 481 275 481 302.4C481 398.9 422.1 406.6 366.2 412.9C375.4 420.8 383.2 435.8 383.2 459.3C383.2 493 382.9 534.7 382.9 542.9C382.9 549.4 387.5 557.3 400.2 555C500.2 521.8 568 426.9 568 316C568 177.3 455.5 72 316.8 72zM169.2 416.9C167.9 417.9 168.2 420.2 169.9 422.1C171.5 423.7 173.8 424.4 175.1 423.1C176.4 422.1 176.1 419.8 174.4 417.9C172.8 416.3 170.5 415.6 169.2 416.9zM158.4 408.8C157.7 410.1 158.7 411.7 160.7 412.7C162.3 413.7 164.3 413.4 165 412C165.7 410.7 164.7 409.1 162.7 408.1C160.7 407.5 159.1 407.8 158.4 408.8zM190.8 444.4C189.2 445.7 189.8 448.7 192.1 450.6C194.4 452.9 197.3 453.2 198.6 451.6C199.9 450.3 199.3 447.3 197.3 445.4C195.1 443.1 192.1 442.8 190.8 444.4zM179.4 429.7C177.8 430.7 177.8 433.3 179.4 435.6C181 437.9 183.7 438.9 185 437.9C186.6 436.6 186.6 434 185 431.7C183.6 429.4 181 428.4 179.4 429.7z"/></svg></a>
+                <a href="mailto:davidpadron.cyber@gmail.com"><svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="#2cf5a9" d="M112 128C85.5 128 64 149.5 64 176C64 191.1 71.1 205.3 83.2 214.4L291.2 370.4C308.3 383.2 331.7 383.2 348.8 370.4L556.8 214.4C568.9 205.3 576 191.1 576 176C576 149.5 554.5 128 528 128L112 128zM64 260L64 448C64 483.3 92.7 512 128 512L512 512C547.3 512 576 483.3 576 448L576 260L377.6 408.8C343.5 434.4 296.5 434.4 262.4 408.8L64 260z"/></svg></a>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="title-box-ctn">
+              <h2 class="title-box-style">Experiencia profesional</h2>
+              <section class="timeline-section">
+                <div class="timeline">
+                  <div class="timeline-item">
+                    <div class="timeline-card">
+                      <h3>Cyber Intelligence Analyst</h3>
+                      <p>Pentesting Al Palo</p>
+                      <span>Actualidad – 12/2025</span>
+                    </div>
+                    <div class="timeline-dot"></div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-card">
+                      <h3>Instructor Seguridad Informática</h3>
+                      <p>Encode S.A</p>
+                      <span>06/2025 – 05/2025</span>
+                    </div>
+                    <div class="timeline-dot"></div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-card">
+                      <h3>Cyber Threat Intelligence Analyst</h3>
+                      <p>Pentesting Al Palo</p>
+                      <span>Actualidad – 01/2024</span>
+                    </div>
+
+                    <div class="timeline-dot"></div>
+                  </div>
+
+                  <div class="timeline-item">
+                    <div class="timeline-card">
+                      <h3>Técnico Soporte Informático</h3>
+                      <p>Autónomo</p>
+                      <span>2024 – 2020</span>
+                    </div>
+                    <div class="timeline-dot"></div>
+                  </div>
+                </div>
+                <br>
+                <br>
+                <a href="cv/david_padron_cyber_threat_intelligence.pdf" target="_blank" class="anchor-btn">VISUALIZAR CV</a>
+              </section>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <!-- STACK DROP DOWN -->
+    <div class="decorative-line"></div>
+    <div class="cyber-dropdown" id="stack">
+      <!-- HEADER -->
+      <div class="cyber-header">
+        <!-- TERMINAL -->
+        <div class="terminal-box">
+          <div class="prompt">
+            ┏━[feathers@mcgr4w]-[~/]
+          </div>
+          <div class="command-line-arrow">
+            ┗━>
+            <span class="command-line" style="--chars:5">stack</span>
+          </div>
+        </div>
+        <!-- BOTON -->
+        <button class="dropdown-btn">
+          OPEN STACK
+        </button>
+      </div>
+
+      <!-- DROPDOWN -->
+      <div class="dropdown-content">
+        <section class="stack-section">
+          <div class="stack-category">
+            <h3>Sistemas Operativos</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="/img/technologies/icons/debian.svg">
+                <span>Debian Linux</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/kali-linux.svg">
+                <span>Kali Linux</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/rasberry-pi-os.svg">
+                <span>Raspberry OS</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/windows.svg">
+                <span>Windows</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-category">
+            <h3>Lenguajes y Scripting</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="img/technologies/icons/bash.svg">
+                <span>Bash</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/python.svg">
+                <span>Python</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/javascript.svg">
+                <span>Javascript</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/c.svg">
+                <span>C</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/mysql.svg">
+                <span>SQL</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-category">
+            <h3>Pentesting</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="img/technologies/icons/burpsuite.svg">
+                <span>BurpSuite</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/nmap.svg">
+                <span>Nmap</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/projectdiscovery.svg">
+                <span>ProjectDiscovery</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/wfuzz.svg">
+                <span>Wfuuz</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/espoofer.svg">
+                <span>Espoofer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-category">
+            <h3>OSINT</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="img/technologies/icons/spiderfoot.svg">
+                <span>Spiderfoot</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/fofa.svg">
+                <span>Fofa</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/sherlock.svg">
+                <span>Sherlock</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/holehe.svg">
+                <span>Holehe</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/ghunt.svg">
+                <span>Ghunt</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-category">
+            <h3>Threat Intelligence</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="img/technologies/icons/virustotal.svg">
+                <span>VirusTotal</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/urlscan.svg">
+                <span>URLScan</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/opencti.svg">
+                <span>OpenCTI</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/maltego.svg">
+                <span>Maltego</span>
+              </div>
+              <div class="stack-card">
+                <img src="img/technologies/icons/gephi.svg">
+                <span>Gephi</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-category">
+            <h3>Hacking Forums</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="/img/technologies/icons/breachforums.svg">
+                <span>BreachForums</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/darkforum.svg">
+                <span>DarkForum</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/onion.svg">
+                <span>Onion Sites</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/telegram.svg">
+                <span>Telegram</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/x.svg">
+                <span>X/Twitter</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-category">
+            <h3>Análisis de Malware</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="/img/technologies/icons/procmon.svg">
+                <span>ProcMon</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/fakenet.svg">
+                <span>FakeNet</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/detectiteasy.svg">
+                <span>Detect It Easy</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/ghidra.svg">
+                <span>Ghidra</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/malcat.svg">
+                <span>Malcat</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack-category">
+            <h3>Frameworks</h3>
+            <div class="stack-grid">
+              <div class="stack-card">
+                <img src="/img/technologies/icons/mitreatt&ck.svg">
+                <span>MITRE ATT&CK</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/mitrecve.svg">
+                <span>MITRE CVE</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/firstcvss.svg">
+                <span>FIRST CVSS</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/owasp.svg">
+                <span>OWASP</span>
+              </div>
+              <div class="stack-card">
+                <img src="/img/technologies/icons/nist.svg">
+                <span>NIST 800-53</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <!-- PROJECTS DROP DOWN -->
+    <div class="decorative-line"></div>
+    <div class="cyber-dropdown" id="projects">
+      <!-- HEADER -->
+      <div class="cyber-header">
+        <!-- TERMINAL -->
+        <div class="terminal-box">
+          <div class="prompt">
+            ┏━[feathers@mcgr4w]-[~/]
+          </div>
+          <div class="command-line-arrow">
+            ┗━>
+            <span class="command-line" style="--chars:8">projects</span>
+          </div>
+        </div>
+        <!-- BOTON -->
+        <button class="dropdown-btn">
+          OPEN PROJECTS
+        </button>
+      </div>
+
+      <!-- DROPDOWN -->
+      <div class="dropdown-content">
+        <section class="projects-section">
+          <div class="cyber-table">
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/icon/pentesting_al_palo_icon.png">
+              </div>
+
+              <div class="project-title">Co Founder en Pentesting Al Palo Cybersecurity Team</div>
+              <div class="project-description">Equipo Red Team que brinda servicios de seguridad ofensiva, pentesting web, consultoría y pruebas de seguridad en desarrollo de software.</div>
+
+              <div class="project-link">
+                <a href="https://pentestingalpalo.pw/" target="_blank">ACCESS</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/icon/osint_pentester.svg">
+              </div>
+              <div class="project-title">Inteligencia Corporativa Pentesting Recon</div>
+              <div class="project-description">Informe de inteligencia sobre reconocimiento de la superficie de ataque informática de la empresa Cooperativa Eléctrica de Monte LTDA</div>
+              <div class="project-link">
+                <a href="intel_reports/informe_intel_recon_coop_monte_limited.pdf" target="_blank">ACCESS</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/icon/osint_pentester.svg">
+              </div>
+              <div class="project-title">Inteligencia Corporativa Pentesting Recon</div>
+              <div class="project-description">Informe de inteligencia sobre reconocimiento de la superficie de ataque informática de la empresa Grupo Mexx S.R.L</div>
+              <div class="project-link">
+                <a href="intel_reports/informe_intel_recon_grupo_mexx_limited.pdf" target="_blank">ACCESS</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/icon/investigator.svg">
+              </div>
+              <div class="project-title">Inteligencia e Investigación de personas</div>
+              <div class="project-description">Informe de inteligencia sobre Investigación de personas vinculadas por acoso y abuso sexual en Pcia de Bs.As</div>
+              <div class="project-link">
+                <a href="intel_reports/informe_intel_invest_personas_abuso_limited.pdf" target="_blank">ACCESS</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/icon/investigator.svg">
+              </div>
+              <div class="project-title">Inteligencia e Investigación de personas</div>
+              <div class="project-description">Informe de inteligencia sobre investigación de personal ejecutivo de la empresa Cooperativa Eléctrica de Monte LTDA</div>
+              <div class="project-link">
+                <a href="intel_reports/informe_intel_invest_personas_corporativo_limited.pdf" target="_blank">ACCESS</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" height="55" width="55" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="#2cf5a9" d="M535.8 264.5C528.1 233.6 513.5 210.3 482.4 210.3L442.3 210.3L442.3 257.7C442.3 294.5 411.1 325.5 375.5 325.5L268.7 325.5C239.5 325.5 215.3 350.5 215.3 379.8L215.3 481.6C215.3 510.6 240.5 527.6 268.7 535.9C302.5 545.8 335 547.6 375.5 535.9C402.4 528.1 428.9 512.4 428.9 481.6L428.9 440.9L322.2 440.9L322.2 427.3L482.4 427.3C513.5 427.3 525 405.6 535.8 373.1C547 339.6 546.5 307.4 535.8 264.5zM382.2 508.7C374.6 509.2 367.3 505.5 363.3 499C359.4 492.4 359.4 484.3 363.3 477.7C367.3 471.2 374.6 467.5 382.2 468C389.8 467.5 397.1 471.2 401.1 477.7C405 484.3 405 492.4 401.1 499C397.1 505.5 389.8 509.2 382.2 508.7zM263.8 312.1L370.6 312.1C400.3 312.1 424 287.6 424 257.8L424 155.9C424 126.9 399.6 105.2 370.6 100.3C334.8 94.4 295.9 94.7 263.8 100.4C218.6 108.4 210.4 125.1 210.4 156L210.4 196.7L317.3 196.7L317.3 210.3L170.3 210.3C139.2 210.3 112 229 103.5 264.5C93.7 305.2 93.3 330.6 103.5 373.1C111.1 404.7 129.2 427.3 160.3 427.3L197 427.3L197 378.5C197 343.2 227.5 312.1 263.8 312.1zM257.2 128.7C268.5 128.7 277.6 137.8 277.6 149.1C277.6 160.4 268.5 169.5 257.2 169.5C245.9 169.5 236.8 160.4 236.8 149.1C236.8 137.8 245.9 128.7 257.2 128.7z"/></svg>
+              </div>
+              <div class="project-title">OSINT Linkedin Employees</div>
+              <div class="project-description">Script en Python para buscar empleados de LinkedIn a partir un dominio específico.</div>
+              <div class="project-link">
+                <a href="https://github.com/FeathersMcgr4w/find-linkedin-employees" target="_blank">GITHUB</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" height="55" width="55" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="#2cf5a9" d="M535.8 264.5C528.1 233.6 513.5 210.3 482.4 210.3L442.3 210.3L442.3 257.7C442.3 294.5 411.1 325.5 375.5 325.5L268.7 325.5C239.5 325.5 215.3 350.5 215.3 379.8L215.3 481.6C215.3 510.6 240.5 527.6 268.7 535.9C302.5 545.8 335 547.6 375.5 535.9C402.4 528.1 428.9 512.4 428.9 481.6L428.9 440.9L322.2 440.9L322.2 427.3L482.4 427.3C513.5 427.3 525 405.6 535.8 373.1C547 339.6 546.5 307.4 535.8 264.5zM382.2 508.7C374.6 509.2 367.3 505.5 363.3 499C359.4 492.4 359.4 484.3 363.3 477.7C367.3 471.2 374.6 467.5 382.2 468C389.8 467.5 397.1 471.2 401.1 477.7C405 484.3 405 492.4 401.1 499C397.1 505.5 389.8 509.2 382.2 508.7zM263.8 312.1L370.6 312.1C400.3 312.1 424 287.6 424 257.8L424 155.9C424 126.9 399.6 105.2 370.6 100.3C334.8 94.4 295.9 94.7 263.8 100.4C218.6 108.4 210.4 125.1 210.4 156L210.4 196.7L317.3 196.7L317.3 210.3L170.3 210.3C139.2 210.3 112 229 103.5 264.5C93.7 305.2 93.3 330.6 103.5 373.1C111.1 404.7 129.2 427.3 160.3 427.3L197 427.3L197 378.5C197 343.2 227.5 312.1 263.8 312.1zM257.2 128.7C268.5 128.7 277.6 137.8 277.6 149.1C277.6 160.4 268.5 169.5 257.2 169.5C245.9 169.5 236.8 160.4 236.8 149.1C236.8 137.8 245.9 128.7 257.2 128.7z"/></svg>
+              </div>
+              <div class="project-title">OSINT Email Employees</div>
+              <div class="project-description">Script en Python para buscar correos electrónicos a partir un dominio específico.</div>
+              <div class="project-link">
+                <a href="https://github.com/FeathersMcgr4w/emails-from-domain" target="_blank">GITHUB</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" height="55" width="55" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="#2cf5a9" d="M535.8 264.5C528.1 233.6 513.5 210.3 482.4 210.3L442.3 210.3L442.3 257.7C442.3 294.5 411.1 325.5 375.5 325.5L268.7 325.5C239.5 325.5 215.3 350.5 215.3 379.8L215.3 481.6C215.3 510.6 240.5 527.6 268.7 535.9C302.5 545.8 335 547.6 375.5 535.9C402.4 528.1 428.9 512.4 428.9 481.6L428.9 440.9L322.2 440.9L322.2 427.3L482.4 427.3C513.5 427.3 525 405.6 535.8 373.1C547 339.6 546.5 307.4 535.8 264.5zM382.2 508.7C374.6 509.2 367.3 505.5 363.3 499C359.4 492.4 359.4 484.3 363.3 477.7C367.3 471.2 374.6 467.5 382.2 468C389.8 467.5 397.1 471.2 401.1 477.7C405 484.3 405 492.4 401.1 499C397.1 505.5 389.8 509.2 382.2 508.7zM263.8 312.1L370.6 312.1C400.3 312.1 424 287.6 424 257.8L424 155.9C424 126.9 399.6 105.2 370.6 100.3C334.8 94.4 295.9 94.7 263.8 100.4C218.6 108.4 210.4 125.1 210.4 156L210.4 196.7L317.3 196.7L317.3 210.3L170.3 210.3C139.2 210.3 112 229 103.5 264.5C93.7 305.2 93.3 330.6 103.5 373.1C111.1 404.7 129.2 427.3 160.3 427.3L197 427.3L197 378.5C197 343.2 227.5 312.1 263.8 312.1zM257.2 128.7C268.5 128.7 277.6 137.8 277.6 149.1C277.6 160.4 268.5 169.5 257.2 169.5C245.9 169.5 236.8 160.4 236.8 149.1C236.8 137.8 245.9 128.7 257.2 128.7z"/></svg>
+              </div>
+              <div class="project-title">Tor Web Scraper</div>
+              <div class="project-description">Herramienta creada en Python para explotar sistemas web vulnerables a IDORs a través de la red Tor.</div>
+              <div class="project-link">
+                <a href="https://github.com/FeathersMcgr4w/tor_web_scraper" target="_blank">GITHUB</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" height="55" width="55" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="#2cf5a9" d="M316.9 187.3C317.9 187.8 318.7 189 319.9 189C321 189 322.7 188.6 322.8 187.5C323 186.1 320.9 185.2 319.6 184.6C317.9 183.9 315.7 183.6 314.1 184.5C313.7 184.7 313.3 185.2 313.5 185.6C313.8 186.9 315.8 186.7 316.9 187.3zM295 189C296.2 189 297 187.8 298 187.3C299.1 186.7 301.1 186.9 301.5 185.7C301.7 185.3 301.3 184.8 300.9 184.6C299.3 183.7 297.1 184 295.4 184.7C294.1 185.3 292 186.2 292.2 187.6C292.3 188.6 294 189.1 295 189zM516 467.8C512.4 463.8 510.7 456.2 508.8 448.1C507 440 504.9 431.3 498.3 425.7C497 424.6 495.7 423.6 494.3 422.8C493 422 491.6 421.3 490.2 420.8C499.4 393.5 495.8 366.3 486.5 341.7C475.1 311.6 455.2 285.3 440 267.3C422.9 245.8 406.3 225.4 406.6 195.3C407.1 149.4 411.7 64.1 330.8 64C228.4 63.8 254 167.4 252.9 199.2C251.2 222.6 246.5 241 230.4 263.9C211.5 286.4 184.9 322.7 172.3 360.6C166.3 378.5 163.5 396.7 166.1 413.9C159.6 419.7 154.7 428.6 149.5 434.1C145.3 438.4 139.2 440 132.5 442.4C125.8 444.8 118.5 448.4 114 456.9C111.9 460.8 111.2 465 111.2 469.3C111.2 473.2 111.8 477.2 112.4 481.1C113.6 489.2 114.9 496.8 113.2 501.9C108 516.3 107.3 526.3 111 533.6C114.8 540.9 122.4 544.1 131.1 545.9C148.4 549.5 171.9 548.6 190.4 558.4C210.2 568.8 230.3 572.5 246.3 568.8C257.9 566.2 267.4 559.2 272.2 548.6C284.7 548.5 298.5 543.2 320.5 542C335.4 540.8 354.1 547.3 375.6 546.1C376.2 548.4 377 550.7 378.1 552.8L378.1 552.9C386.4 569.6 401.9 577.2 418.4 575.9C435 574.6 452.5 564.9 466.7 548C480.3 531.6 502.7 524.8 517.6 515.8C525 511.3 531 505.7 531.5 497.5C531.9 489.3 527.1 480.2 516 467.8zM319.8 151.3C329.6 129.1 354 129.5 363.8 150.9C370.3 165.1 367.4 181.8 359.5 191.3C357.9 190.5 353.6 188.7 346.9 186.4C348 185.2 350 183.7 350.8 181.8C355.6 170 350.6 154.8 341.7 154.5C334.4 154 327.8 165.3 329.9 177.5C325.8 175.5 320.5 174 316.9 173.1C315.9 166.2 316.6 158.5 319.8 151.3zM279.1 139.8C289.2 139.8 299.9 154 298.2 173.3C294.7 174.3 291.1 175.8 288 177.9C289.2 169 284.7 157.8 278.4 158.3C270 159 268.6 179.5 276.6 186.4C277.6 187.2 278.5 186.2 270.7 191.9C255.1 177.3 260.2 139.8 279.1 139.8zM265.5 200.5C271.7 195.9 279.1 190.5 279.6 190C284.3 185.6 293.1 175.8 307.5 175.8C314.6 175.8 323.1 178.1 333.4 184.7C339.7 188.8 344.7 189.1 356 194C364.4 197.5 369.7 203.7 366.5 212.2C363.9 219.3 355.5 226.6 343.8 230.3C332.7 233.9 324 246.3 305.6 245.2C301.7 245 298.6 244.2 296 243.1C288 239.6 283.8 232.7 276 228.1C267.4 223.3 262.8 217.7 261.3 212.8C259.9 207.9 261.3 203.8 265.5 200.5zM268.8 534.5C266.1 569.6 224.9 568.9 193.5 552.5C163.6 536.7 124.9 546 117 530.6C114.6 525.9 114.6 517.9 119.6 504.2L119.6 504C122 496.4 120.2 488 119 480.1C117.8 472.3 117.2 465.1 119.9 460.1C123.4 453.4 128.4 451 134.7 448.8C145 445.1 146.5 445.4 154.3 438.9C159.8 433.2 163.8 426 168.6 420.9C173.7 415.4 178.6 412.8 186.3 414C194.4 415.2 201.4 420.8 208.2 430L227.8 465.6C237.3 485.5 270.9 514 268.8 534.5zM267.4 508.6C263.3 502 257.8 495 253 489C260.1 489 267.2 486.8 269.7 480.1C272 473.9 269.7 465.2 262.3 455.2C248.8 437 224 422.7 224 422.7C210.5 414.3 202.9 404 199.4 392.8C195.9 381.6 196.4 369.5 199.1 357.6C204.3 334.7 217.7 312.4 226.3 298.4C228.6 296.7 227.1 301.6 217.6 319.2C209.1 335.3 193.2 372.5 215 401.6C215.6 380.9 220.5 359.8 228.8 340.1C240.8 312.7 266.1 265.2 268.1 227.4C269.2 228.2 272.7 230.6 274.3 231.5C278.9 234.2 282.4 238.2 286.9 241.8C299.3 251.8 315.4 251 329.3 243C335.5 239.5 340.5 235.5 345.2 234C355.1 230.9 363 225.4 367.5 219C375.2 249.4 393.2 293.3 404.7 314.7C410.8 326.1 423 350.2 428.3 379.3C431.6 379.2 435.3 379.7 439.2 380.7C453 345 427.5 306.5 415.9 295.8C411.2 291.2 411 289.2 413.3 289.3C425.9 300.5 442.5 323 448.5 348.3C451.3 359.9 451.8 372 448.9 384C465.3 390.8 484.8 401.9 479.6 418.8C477.4 418.7 476.4 418.8 475.4 418.8C478.6 408.7 471.5 401.2 452.6 392.7C433 384.1 416.6 384.1 414.3 405.2C402.2 409.4 396 419.9 392.9 432.5C390.1 443.7 389.3 457.2 388.5 472.4C388 480.1 384.9 490.4 381.7 501.4C349.6 524.3 305 534.3 267.4 508.6zM524.8 497.1C523.9 513.9 483.6 517 461.6 543.6C448.4 559.3 432.2 568 418 569.1C403.8 570.2 391.5 564.3 384.3 549.8C379.6 538.7 381.9 526.7 385.4 513.5C389.1 499.3 394.6 484.7 395.3 472.9C396.1 457.7 397 444.4 399.5 434.2C402.1 423.9 406.1 417 413.2 413.1C413.5 412.9 413.9 412.8 414.2 412.6C415 425.8 421.5 439.2 433 442.1C445.6 445.4 463.7 434.6 471.4 425.8C480.4 425.5 487.1 424.9 494 430.9C503.9 439.4 501.1 461.2 511.1 472.5C521.7 484.1 525.1 492 524.8 497.1zM269.4 212.7C271.4 214.6 274.1 217.2 277.4 219.8C284 225 293.2 230.4 304.7 230.4C316.3 230.4 327.2 224.5 336.5 219.6C341.4 217 347.4 212.6 351.3 209.2C355.2 205.8 357.2 202.9 354.4 202.6C351.6 202.3 351.8 205.2 348.4 207.7C344 210.9 338.7 215.1 334.5 217.5C327.1 221.7 315 227.7 304.6 227.7C294.2 227.7 285.9 222.9 279.7 218C276.6 215.5 274 213 272 211.1C270.5 209.7 270.1 206.5 267.7 206.2C266.3 206.1 265.9 209.9 269.4 212.7z"/></svg>
+              </div>
+              <div class="project-title">Linux OSINT Tool</div>
+              <div class="project-description">Herramienta en Linux creada para automatizar el reconocimiento Osint en Pentesting Web.</div>
+              <div class="project-link">
+                <a href="https://github.com/FeathersMcgr4w/osintTool" target="_blank">GITHUB</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    
+    <br>
+    <br>
+    <!-- CERTS DROP DOWN -->
+    <div class="decorative-line"></div>
+    <div class="cyber-dropdown" id="certs">
+      <!-- HEADER -->
+      <div class="cyber-header">
+        <!-- TERMINAL -->
+        <div class="terminal-box">
+          <div class="prompt">
+            ┏━[feathers@mcgr4w]-[~/]
+          </div>
+          <div class="command-line-arrow">
+            ┗━>
+            <span class="command-line" style="--chars:5">certs</span>
+          </div>
+        </div>
+        <!-- BOTON -->
+        <button class="dropdown-btn">
+          OPEN CERTS
+        </button>
+      </div>
+
+      <!-- DROPDOWN -->
+      <div class="dropdown-content">
+        <section class="projects-section">
+          <div class="cyber-table">
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/introduction_to_cybersecurity.png">
+              </div>
+
+              <div class="project-title">Introduction to Cybersecurity</div>
+              <div class="project-description">Cyber threats, attacks and vulnerabilities. Analyze and mitigate threats.</div>
+
+              <div class="project-link">
+                <a href="https://www.credly.com/badges/68493d28-30ad-4a61-8ada-88c84a1fbd74/public_url" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/network_basics.png">
+              </div>
+              <div class="project-title">Networking Basics</div>
+              <div class="project-description">Types of networks, network communication, Routing, wireless connectivity. IPv4 - IPv6.</div>
+              <div class="project-link">
+                <a href="https://www.credly.com/badges/027aa53f-aeb0-4c46-9406-9f3ddf48c97b/public_url" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/networking_devices.png">
+              </div>
+              <div class="project-title">Networking Devices</div>
+              <div class="project-description">Virtualization and Cloud Services, TCP, UDP, Sockets, ARP, ND, DNS DHCP, Cisco IOS, Cisco Devices.</div>
+              <div class="project-link">
+                <a href="https://www.credly.com/badges/641dc7f3-a4bd-4b26-b7e1-ee5d34f948f7/public_url" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/endpoint_security.png">
+              </div>
+              <div class="project-title">Endpoint Security</div>
+              <div class="project-description">Network security, analyze network traffic, network threats, operating systems, Firewalls, IPS, IDS, ACLs, EDR.</div>
+              <div class="project-link">
+                <a href="https://www.credly.com/badges/94bada3d-783f-4997-873f-389aeec13c14/public_url" target="_blank">GITHUB</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/network_defense.png">
+              </div>
+              <div class="project-title">Network Defense</div>
+              <div class="project-description">Security architecture, Firewalls-Rules, Firewals-ZPF, Routers-ACLs, Cloud Security, cryptography, alert analysis.</div>
+              <div class="project-link">
+                <a href="https://www.credly.com/badges/5200d409-f1cf-42fe-886f-d95797f7512f/public_url" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/threat_management.png">
+              </div>
+              <div class="project-title">Cyber Threat Management</div>
+              <div class="project-description">Governance, ISO 27000, Penetration Tests, Threat Intelligence, CVE, Mitre ATTACK & CK, Risk Management, CSIRT.</div>
+              <div class="project-link">
+                <a href="https://www.credly.com/badges/140cef91-5490-40c5-ba5e-6bf5c7f891b3/public_url" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/cybersecurity_exam.png">
+              </div>
+              <div class="project-title">Junior Cybersecurity Analyst Career Path Exam</div>
+              <div class="project-description">Exam grade: 92%</div>
+              <div class="project-link">
+                <a href="https://www.credly.com/badges/ab5838db-6cda-47c2-998f-b9a30ef705e8/public_url" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/udemy_icon.png">
+              </div>
+              <div class="project-title">Dynamic malware analysis under Windows</div>
+              <div class="project-description">Process Monitor, Process Explorer, AutoRuns, Fakenet-ng, Eset SysInspector, Registry Explorer, Regshot, Hyper-Analysis, VirusTotal.</div>
+              <div class="project-link">
+                <a href="https://www.udemy.com/certificate/UC-902c2580-0ddf-4524-84c9-4ce2fe598998/" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/certs/udemy_icon.png">
+              </div>
+              <div class="project-title">Static malware analysis under Windows</div>
+              <div class="project-description">Detect It Easy (DIE), Dependency Walker, PeStudio, pdfStreamDumper, OleTools, Ghidra, Malcat.</div>
+              <div class="project-link">
+                <a href="https://www.udemy.com/certificate/UC-c3aa77b5-08cd-490e-84f9-c60ad3d1b698/" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/technologies/icons/breachforums.svg">
+              </div>
+              <div class="project-title">Osint y Ciberdelincuencia - Ivan Castañeda</div>
+              <div class="project-description">1.Foros, Telegram, Deep Web, 2.OSINT en redes sociales: perfilamiento, IMINT, metadatos, 3.Infostealers: Combolists y ULP, 4.Bots maliciosos: phishing, scraping, c2, 5.Campañas de phishing: URLs, redirect, hash, dominios, 6.Scripting en Python: Scripts en Python para OSINT, Sistema de seguimiento en Telegram, Sistema iplogger o grabify, Scripts para detección de bots, Sistema de geolocalización en X</div>
+              <div class="project-link">
+                <a href="https://x.com/ivancastl/status/1988733022447735207" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/technologies/icons/hefin.svg">
+              </div>
+              <div class="project-title">Técnicas avanzadas en Ciberinteligencia (TACINT)</div>
+              <div class="project-description">1.Fuentes de inteligencia, 2.Fuentes OSINT, 3.Entorno OPSEC, 4.TTPs Agentes de Amenaza, 5.Monitoreo de amenazas digitales, 6.Técnicas de Desanonimización, 7.Fingerprint, 8.Cyberprofiling, 9.IMINT, 10.SOCMINT, 11.Metadatos Exif, 12.Big Data OSINT, 13.Monitoreo Telegram, Redes Deep Web, Foros Ciberdelincuencia, 14.Análisis de Blockchain, 15.Análisis de tráfico marítimo y aéreo</div>
+              <div class="project-link">
+                <a href="https://hefin.net/cursos2/tacint-tecnicas-avanzadas-en-ciberinteligencia-asincronico/" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/technologies/icons/hackthebox.svg">
+              </div>
+              <div class="project-title">HACK THE BOX</div>
+              <div class="project-description">Resolución de 20 laboratorios de dificultad fácil y nivel medio donde se practico habilidades técnicas de: IDORs, API Enumeration, Command Injection, File Upload Bypass, SSRF, SSTI, XSS Stored, WPA Pin brute force, SQL Injection, LFI, Auth Bypass, Broken Parser Logic, API Explotation, SUID Capability, CVE-2023-0386, CVE-2022-37706, Crack id_rsa hash, Forency device USB, CVE-2022-24439, CVE-2023-2640, Docker Breakouts, LXD Abuse, Sysytemctl misconfig.</div>
+              <div class="project-link">
+                <a href="https://profile.hackthebox.com/profile/019de434-ce87-72f0-a416-142349cb8d0f" target="_blank">VERIFY</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <!-- EVENTS DROP DOWN -->
+    <div class="decorative-line"></div>
+    <div class="cyber-dropdown" id="events">
+      <!-- HEADER -->
+      <div class="cyber-header">
+        <!-- TERMINAL -->
+        <div class="terminal-box">
+          <div class="prompt">
+            ┏━[feathers@mcgr4w]-[~/]
+          </div>
+          <div class="command-line-arrow">
+            ┗━>
+            <span class="command-line" style="--chars:6">events</span>
+          </div>
+        </div>
+        <!-- BOTON -->
+        <button class="dropdown-btn">
+          OPEN EVENTS
+        </button>
+      </div>
+
+      <!-- DROPDOWN -->
+      <div class="dropdown-content">
+        <section class="projects-section">
+          <div class="cyber-table">
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/events/argencon_ieee_utn_icon.jpg">
+              </div>
+
+              <div class="project-title">IEEE 2024 - VII Congreso Bienal ARGENCON</div>
+              <div class="project-description">Track de Ciberseguridad y Ciberdefensa</div>
+
+              <div class="project-link">
+                <a href="https://events.vtools.ieee.org/m/416612" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/events/ekoparty_2024_icon.png">
+              </div>
+              <div class="project-title">Ekoparty Security Conference 2024</div>
+              <div class="project-description">Ekoparty conferencia de seguridad informática más grande de América Latina.</div>
+              <div class="project-link">
+                <a href="/img/events/certs/Certificado_Ekoparty_2024.pdf" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/events/ekoparty_summer_workshops_icon.jpg">
+              </div>
+              <div class="project-title">Ekoparty Summer Workshops 2025</div>
+              <div class="project-description">Improvisación aplicada para Ingeniería Social</div>
+              <div class="project-link">
+                <a href="img/events/certs/Ekoparty_Summer_Workshops_2025_2.pdf" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/events/ekoparty_summer_workshops_icon.jpg">
+              </div>
+              <div class="project-title">Ekoparty Summer Workshops 2025</div>
+              <div class="project-description">Hunting Threat as a Security Ninja</div>
+              <div class="project-link">
+                <a href="/img/events/certs/Ekoparty_Summer_Workshops_2025_3.pdf" target="_blank">GITHUB</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/events/ekoparty_summer_workshops_icon.jpg">
+              </div>
+              <div class="project-title">Ekoparty Summer Workshops 2025</div>
+              <div class="project-description">Attacking Amazon Web Services</div>
+              <div class="project-link">
+                <a href="img/events/certs/Ekoparty_Summer_Workshops_2025_4.pdf" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/events/ekoparty_webinars.jpg">
+              </div>
+              <div class="project-title">Ekoparty Webinars 2025</div>
+              <div class="project-description">Social Engineering and Osint</div>
+              <div class="project-link">
+                <a href="/img/events/certs/Ekoparty_webinars_Ingenieria_Social_y_Osint-Investigacion_de_Fraudes_y_Ciberdelitos.pdf" target="_blank">VERIFY</a>
+              </div>
+            </div>
+            <!-- ROW -->
+            <div class="cyber-row">
+              <div class="project-icon">
+                <img src="img/events/ekoparty_2025_icon.png">
+              </div>
+              <div class="project-title">Ekoparty Security Conference 2025</div>
+              <div class="project-description">Ekoparty conferencia de seguridad informática más grande de América Latina.</div>
+              <div class="project-link">
+                <a href="img/events/certs/certificado_ekoparty_2025.pdf" target="_blank">VERIFY</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <!-- MYBLOG DROP DOWN -->
+    <div class="decorative-line"></div>
+    <div class="cyber-dropdown" id="myblog">
+      <!-- HEADER -->
+      <div class="cyber-header">
+        <!-- TERMINAL -->
+        <div class="terminal-box">
+          <div class="prompt">
+            ┏━[feathers@mcgr4w]-[~/]
+          </div>
+          <div class="command-line-arrow">
+            ┗━>
+            <span class="command-line" style="--chars:6">myblog</span>
+          </div>
+        </div>
+        <!-- BOTON -->
+        <button class="dropdown-btn">
+          OPEN MYBLOG
+        </button>
+      </div>
+
+      <!-- DROPDOWN -->
+      <div class="dropdown-content">
+        <section class="myblog-section">
+          <div class="myblog-card">
+            <div>
+              <div class="stack-card">
+                <img src="/img/certs/hackthebox_iconpng.png">
+                <a href="./pages/hackthebox-ctfs.html" target="_blank" class="anchor-tag">Resolución CTFs</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="myblog-card">
+            <div>
+              <div class="stack-card">
+                <img src="img/myblog/blog/obsidian_logo.svg">
+                <a href="./pages/myblog.html" target="_blank" class="anchor-tag">Articulos Técnicos</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <br>
+  <footer class="cyber-footer">
+    <div class="footer-status">
+        <span class="status-dot"></span>
+        SYSTEM STATUS : ONLINE
+    </div>
+    <div class="footer-author">Design by David Padron</div>
+    <div class="footer-contacts">
+        <a href="https://linkedin.com/in/david-padron-9a74aa323" target="_blank">LINKEDIN</a>
+        <a href="https://github.com/FeathersMcgr4w" target="_blank">GITHUB</a>
+        <a href="mailto:davidpadron.cyber@gmail.com">EMAIL</a>
+    </div>
+  </footer>
+  <script type="text/javascript" src="general_script.js"></script>
+  <script type="text/javascript" src="digital_identity.js"></script>
+</body>
+</html>

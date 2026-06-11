@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilex:ital,wght@0,100..700;1,100..700&family=Wallpoet&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./pages.css">
+<title>Hackthebox CTFs</title>
+</head>
+<body>
+  <div class="main-container">
+    <nav class="navbar" aria-label="Navegación HackTheBox">
+      <a href="../index.html" class="navbar-brand" aria-label="Volver al inicio">
+        <div class="header-icon"></div>
+      </a>
+      <h5>HackTheBox</h5>
+    </nav>
+    <div class="decorative-line"></div>
+    <br>
+    <div class="title-ctn">
+        <div class="subtitle-ctn">
+            <h1>HackTheBox Walkthrough</h1>
+        </div>
+        <div class="border-box-2">
+            <img src="../img/abstract_geometry/abstract_geometric_globe.svg" alt="abstract-globe-geometry" class="globe-geometry">
+        </div>
+    </div>
+    <section class="projects-section">
+        <div class="cyber-table">
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/fb2d9f98400e3c802a0d7145e125c4ff.png">
+            </div>
+
+            <div class="project-title">Lame</div>
+            <div class="project-os">Ubuntu Hardy</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">FTP anonymous</div>
+            <div class="project-technique">SMB Samba explotation</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Lame_machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/c85f528547863185f1140c92e122eda7.png">
+            </div>
+
+            <div class="project-title">Backend</div>
+            <div class="project-os">Ubuntu 20.04.2 LTS Focal</div>
+            <div class="project-difficulty difficulty-medium">Medium</div>
+            <div class="project-category">API Explotation (FastAPI-Python), JWToken</div>
+            <div class="project-technique">Password in auth.log</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Backend_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/3ebb6fead558552c03f68a5895fb3d15.png">
+            </div>
+
+            <div class="project-title">Seal</div>
+            <div class="project-os">Ubuntu 20.04.2 LTS Focal</div>
+            <div class="project-difficulty difficulty-medium">Medium</div>
+            <div class="project-category">Broken Parser Logic, Tomcat .war deploy RCE</div>
+            <div class="project-technique">Softlink, Ansible-Playbook, /bin/bash(SUID)</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Seal_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/241315b7f1bf911eb1b8dfa0b87e4723.png">
+            </div>
+
+            <div class="project-title">Cache</div>
+            <div class="project-os">Ubuntu 18.04.2 LTS Bionic</div>
+            <div class="project-difficulty difficulty-medium">Medium</div>
+            <div class="project-category">Authentication Bypass, SQLI, RCE</div>
+            <div class="project-technique">Memcache (port 11211), Docker Abuse (/mnt)</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Cache_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/9b4c7b192eb00be8460364338e48f21f.png">
+            </div>
+
+            <div class="project-title">Tabby</div>
+            <div class="project-os">Ubuntu 20.04 LTS Focal</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">LFI + Tomcat .war deploy RCE</div>
+            <div class="project-technique">LXD Abuse (lxc, /mnt)</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Tabby_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/f49b988a9f7df99dba3d7644f55021fd.png">
+            </div>
+
+            <div class="project-title">GoodGames</div>
+            <div class="project-os">Debian 11 (bullseye)</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">SQL Injection + Server Side Temp. Inj. + RCE</div>
+            <div class="project-technique">Docker Breakouts (Docker)</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/GoodGames_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/e2e239f39430cf597202497d910b82b8.png">
+            </div>
+
+            <div class="project-title">Validation</div>
+            <div class="project-os">Ubuntu1 20.04 Focal</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">SQL Injection + PHP Command Injection RCE</div>
+            <div class="project-technique">Root password in archive config.php (Docker)</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Validation_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/1ea2980b9dc2d11cf6a3f82f10ba8702.png">
+            </div>
+
+            <div class="project-title">Sau</div>
+            <div class="project-os">Ubuntu 20.04.6 LTS Focal</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">SSRF on Request-Baskets (CVE-2023-27163)</div>
+            <div class="project-technique">Sysytemctl misconfig. Broken less View</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Sau_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/4aaf2ad33bea830079d74497f8e7fefc.png">
+            </div>
+
+            <div class="project-title">Wifinetic</div>
+            <div class="project-os">Ubuntu 20.04.6 Focal krnwifinetic</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">FTP anonymus y Acceso por SHH</div>
+            <div class="project-technique">WPA Pin brute force attack with Reaver</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Wifinetic_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/26e076db204a74b99390e586d7ebcf8c.png">
+            </div>
+
+            <div class="project-title">Headless</div>
+            <div class="project-os">Debian GNU/Linux 12 (bookworm)</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">XSS (http headers) , Command Injection</div>
+            <div class="project-technique">/bin/bash(SUID)</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Headless_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/57fc0f58916cb3ed8e793db071769d70.png">
+            </div>
+
+            <div class="project-title">Perfection</div>
+            <div class="project-os">Ubuntu 22.04.4 LTS Jammy</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">Server Side Temple Injection - WEBrick - Ruby</div>
+            <div class="project-technique">Hashcat Brute Force</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Perfection_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/f86fcf4c1cfcc690b43f43e100f89718.png">
+            </div>
+
+            <div class="project-title">Analytics</div>
+            <div class="project-os">Ubuntu 22.04.3 LTS Jammy</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">Metabase 0.46.6 - CVE-2023-38646 (RCE)</div>
+            <div class="project-technique">Linux Kernel OverlayFS CVE-2023-2640 and CVE-2023-32629</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Analytics_Machine.pdf" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/3ec233f1bf70b096a66f8a452e7cd52f.png">
+            </div>
+
+            <div class="project-title">PermX</div>
+            <div class="project-os">Ubuntu 0.10 Jammy</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">Chamilo - CVE-2023-4220</div>
+            <div class="project-technique">ACL Abuse in Linux</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/PermX_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/a466db5ce4f7aaea98f588d1cb71a0aa.png">
+            </div>
+
+            <div class="project-title">Editorial</div>
+            <div class="project-os">Ubuntu0.7 Jammy</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">Server-Side Request Forgery (SSRF)</div>
+            <div class="project-technique">Git enumeration, CVE-2022-24439 GitPython 3.1.29</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Editorial_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/0b286019523dcd78cf03d3a3472a3792.png">
+            </div>
+
+            <div class="project-title">Networked</div>
+            <div class="project-os">CentOS 7</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">File upload bypass</div>
+            <div class="project-technique">Crontab, Command injection, /network-scripts/ in contOS</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Networked_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/4ef1ea77e69185063d4200d7d0142baa.png">
+            </div>
+
+            <div class="project-title">Mirai</div>
+            <div class="project-os">RaspberryOS Pi-hole</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">Deafult Raspberry Pi-hole Credentials</div>
+            <div class="project-technique">Forency device USB</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Mirai_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/5b00db157dbbd7099ff6c0ef10f910ea.png">
+            </div>
+
+            <div class="project-title">OpenAdmin</div>
+            <div class="project-os">Linux</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">OpenNetAdmin 18.1.1 - RCE</div>
+            <div class="project-technique">Crack id_rsa hash, Bit suid with nano</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/OpenAdmin_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/7768afed979c9abe917b0c20df49ceb8.png">
+            </div>
+
+            <div class="project-title">BoardLight</div>
+            <div class="project-os">Ubuntu 0.11 Focal</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">Dolibarr - CVE-2023-30253</div>
+            <div class="project-technique">Enlightenment 0.23.1 CVE-2022-37706</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/BoadLight_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/d7bc2758fb7589dfa046bee9ce4d75cb.png">
+            </div>
+
+            <div class="project-title">TwoMillion</div>
+            <div class="project-os">Ubuntu 22.04 LTS Jammy</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">API Enumeration, Command Injection</div>
+            <div class="project-technique">CVE-2023-0386, Linux Kernel OverlayFS setuid</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/TwoMillion_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+          <!-- ROW -->
+          <div class="cyber-row">
+            <div class="project-icon">
+              <img src="https://htb-mp-prod-public-storage.s3.eu-central-1.amazonaws.com/avatars/70ea3357a2d090af11a0953ec8717e90.png">
+            </div>
+
+            <div class="project-title">Cap</div>
+            <div class="project-os">Linux</div>
+            <div class="project-difficulty difficulty-easy">Easy</div>
+            <div class="project-category">Idors</div>
+            <div class="project-technique">Linux capabilities SUID</div>
+
+            <div class="project-link">
+              <a href="/htb_walkthrough/Cap_machine.txt" target="_blank">WALKTHROUGH</a>
+            </div>
+          </div>
+        </div>
+    </section>
+  </div>
+  <br>
+  <footer class="cyber-footer">
+    <div class="footer-status">
+        <span class="status-dot"></span>
+        SYSTEM STATUS : ONLINE
+    </div>
+    <div class="footer-author">Design by David Padron</div>
+    <div class="footer-contacts">
+        <a href="https://linkedin.com/in/david-padron-9a74aa323" target="_blank">LINKEDIN</a>
+        <a href="https://github.com/FeathersMcgr4w" target="_blank">GITHUB</a>
+        <a href="mailto:davidpadron.cyber@gmail.com">EMAIL</a>
+    </div>
+  </footer>
+</body>
+</html>

