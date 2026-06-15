@@ -198,6 +198,7 @@ display:flex;
 justify-content:center;
 }
 
+/* GREEN BUTTON */
 .project-link a{
 text-decoration:none;
 color:#2cf5a9;
@@ -207,7 +208,6 @@ font-size:12px;
 letter-spacing:1px;
 transition:.3s;
 }
-
 /* BUTTON HOVER */
 .project-link a:hover{
 background:#2cf5a9;
@@ -215,6 +215,26 @@ color:#000;
 box-shadow:
 0 0 10px #2cf5a9,
 0 0 20px rgba(44,245,169,.4);
+}
+
+/* RED BUTTON */
+.red-button {
+  text-decoration:none;
+  color:#f52c2c;
+  border: 1px solid rgba(245, 44, 44, 0.558);
+  padding: 10px 18px;
+  font-size:12px;
+  font-weight: bold;
+  letter-spacing:1px;
+  transition:.3s;
+}
+/* BUTTON HOVER */
+.red-button:hover{
+background:#f52c2c;
+color:#000;
+box-shadow:
+0 0 10px #f52c2c,
+0 0 20px rgba(245, 44, 44, 0.35);
 }
 
 /* DESCRIPTION */
@@ -324,6 +344,37 @@ box-shadow:
   100% {
     top: 100%;
   }
+}
+
+/*- - - DARK FORUMS PAGE - - -*/
+.pagination{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+margin-top:30px;
+}
+
+.pagination button{
+background:transparent;
+border:1px solid rgba(44,245,169,.3);
+color:#2cf5a9;
+padding:10px 20px;
+cursor:pointer;
+transition:.3s;
+}
+
+.pagination button:hover{
+background:#2cf5a9;
+color:#000;
+box-shadow:
+0 0 10px #2cf5a9;
+}
+
+#pageInfo{
+color:#2cf5a9;
+font-size:13px;
+letter-spacing:2px;
 }
 
 /*- - - FOOTER - - -*/
