@@ -1451,6 +1451,7 @@ opacity:.5;
   }
 
   .description-box-1 {
+    width: 94%;
     margin: 12px;
     font-size: 13px;
     line-height: 1.7;
@@ -1480,6 +1481,7 @@ opacity:.5;
 
   .timeline-card {
     padding: 14px;
+    background: #0e1512e8;
   }
 
   .anchor-btn {

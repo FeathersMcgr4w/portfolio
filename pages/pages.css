@@ -735,9 +735,17 @@ opacity:.5;
     text-align: center;
   }
 
-  .cyber-row-blog .project-description {
+  .cyber-row-blog {
     font-size: 12px;
     line-height: 1.6;
+  }
+
+  .project-description {
+	width: 100%;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+	text-align: center;
   }
 
   /* Footer */
