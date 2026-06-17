@@ -626,6 +626,15 @@ opacity:.5;
   .cyber-footer {
     padding: 40px 16px;
   }
+
+  /* ERROR 404 PAGE */
+    .error-box{
+    padding:50px 30px;
+  }
+
+  .error-code{
+    font-size:90px;
+  }
 }
 
 /* ============================================
@@ -741,12 +750,13 @@ opacity:.5;
   }
 
   .project-description {
-	width: 100%;
-	max-width: 100%;
-	overflow-wrap: anywhere;
-	word-break: break-word;
-	text-align: center;
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    text-align: center;
   }
+
 
   /* Footer */
   .cyber-footer {
@@ -777,5 +787,132 @@ opacity:.5;
     display: block;
     text-align: center;
     width: 100%;
+  }
+
+  /* ERROR 404 PAGE */
+  .error-box{
+    padding:40px 20px;
+  }
+
+  .error-code{
+    font-size:70px;
+  }
+
+  .error-description{
+    font-size:13px;
+  }
+
+  .return-home-btn{
+    width:100%;
+    max-width:240px;
+  }
+}
+
+/* ==========================================
+   ERROR PAGE 404
+   ========================================== */
+.error-404-section{
+  min-height:65vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:60px 0;
+}
+
+.error-box{
+  width:100%;
+  max-width:700px;
+  border:1px solid rgba(44,245,169,.25);
+  background: rgba(44,245,169,.03);
+  backdrop-filter:blur(4px);
+  padding:60px 40px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* scanner */
+.error-box::before{
+  content:"";
+  position:absolute;
+  top:-100%;
+  left:0;
+  width:100%;
+  height:2px;
+  background:#2cf5a9;
+  opacity:.35;
+  animation: scanner404 6s linear infinite;
+}
+
+.error-code{
+  font-family:"Wallpoet", sans-serif;
+  font-size:120px;
+  color:#2cf5a9;
+  text-shadow:
+    0 0 10px #2cf5a9,
+    0 0 30px rgba(44,245,169,.35);
+  animation: glitch404 5s infinite;
+}
+
+.error-status{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  color:#2cf5a9;
+  letter-spacing:2px;
+  margin-bottom:20px;
+}
+
+.error-description{
+  color:rgba(44,245,169,.8);
+  max-width:450px;
+  margin:0 auto 40px;
+  line-height:1.8;
+}
+
+/* button */
+.return-home-btn{
+  display:inline-block;
+  text-decoration:none;
+  color:#2cf5a9;
+  border: 1px solid rgba(44,245,169,.35);
+  padding:14px 28px;
+  transition:.3s;
+}
+
+.return-home-btn:hover{
+  background:#2cf5a9;
+  color:#000;
+  box-shadow:
+    0 0 10px #2cf5a9,
+    0 0 20px rgba(44,245,169,.4);
+  transform:
+    translateY(-2px);
+}
+
+/* scanner */
+@keyframes scanner404{
+  0%{
+    top:-100%;
+  }
+  100%{
+    top:100%;
+  }
+}
+
+/* glitch */
+@keyframes glitch404{
+  0%,95%,100%{
+    transform:translateX(0);
+  }
+  96%{
+    transform:translateX(-2px);
+  }
+  97%{
+    transform:translateX(2px);
+  }
+  98%{
+    transform:translateX(-1px);
   }
 }
