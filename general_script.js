@@ -1,12 +1,29 @@
 // TOGGLE MENU
 const toggle = document.getElementById("menuToggle");
 const menu = document.getElementById("mobileMenu");
+const closeBtn = document.getElementById("menuClose");
 
 if (toggle && menu) {
   toggle.addEventListener("click", () => {
     menu.classList.toggle("active");
   });
 }
+
+if (closeBtn && menu) {
+  closeBtn.addEventListener("click", () => {
+    menu.classList.remove("active");
+  });
+}
+
+// Close menu with ESC keyboard
+document.addEventListener("keydown", (event) => {
+  if (
+      event.key === "Escape" &&
+      menu.classList.contains("active")
+  ){
+      menu.classList.remove("active");
+  }
+});
 
 // Abrir sección dropdown desde enlace de navegación
 function openSectionFromNavLink(link) {

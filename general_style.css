@@ -10,7 +10,7 @@
 body {
   background: #0d0d0d;
 }
-.main-container { /*layout tipo blog*/
+.main-container { /*blog layout*/
   max-width: 1200px;
   margin: 20px auto;
 }
@@ -19,9 +19,6 @@ body {
 .navbar {
   width: 100%;
   margin: 30px 0 20px 0;
-  /*position: fixed;*/
-  /*top: 0;
-  left: 0;*/
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -87,7 +84,7 @@ body {
   gap: 30px;
   transform: translateY(-100%);
   transition: 0.4s ease;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .mobile-menu a {
@@ -106,7 +103,28 @@ body {
   transform: translateY(0);
 }
 
-/* Nav responsive: ver bloque TABLET / MOBILE al final del archivo */
+/* CLOSE BUTTON */
+.menu-close{
+  position:absolute;
+  top:30px;
+  right:30px;
+  background:none;
+  border:none;
+  color:#2cf5a9;
+  font-size:32px;
+  font-weight:300;
+  cursor:pointer;
+  transition:.3s;
+}
+
+/* HOVER */
+.menu-close:hover{
+  transform:rotate(90deg);
+  color:#35d36f;
+  text-shadow:
+    0 0 10px #2cf5a9,
+    0 0 20px rgba(44,245,169,.4);
+}
 
 /*- - - DECORATIVE LINE - - -*/
 .decorative-line {
@@ -123,34 +141,34 @@ body {
   justify-content: center;
   align-items: center;
 }
-/* Escena */
+/* scene */
 .scene {
   perspective: 150px;
   width: 1200px;
   height: 230px;
 }
-/* Túnel */
+/* Tunnel */
 .tunnel {
   width: 100%;
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
 }
-/* Base de grilla */
+/* Grid base */
 .wall {
   position: absolute;
   width: 100%;
   height: 100%;
   background:
-    /* líneas horizontales */
+    /* horizontal lines */
     linear-gradient(#2cf5a9 0.3px, transparent 0.5px),
-    /* líneas verticales */
+    /* vertical lines */
     linear-gradient(90deg, #2cf5a9 0.3px, transparent 0.5px),
 
-    /* diagonales ↘ */
+    /* diagonals ↘ */
     linear-gradient(45deg, #2cf5a9 0.3px, transparent 0.5px),
 
-    /* diagonales ↙ */
+    /* diagonals ↙ */
     linear-gradient(-45deg, #2cf5a9 0.3px, transparent 0.5px);
 
   background-size:
@@ -159,31 +177,31 @@ body {
     80px 80px,
     80px 80px;
 }
-/* Piso */
+/* Floor */
 .floor {
   transform: rotateX(90deg) translateZ(255px);
   transform-origin: bottom;
 }
-/* Techo */
+/* Ceiling */
 .ceiling {
   transform: rotateX(-90deg) translateZ(255px);
   transform-origin: top;
 }
-/* Pared izquierda */
+/* Left wall */
 .left {
   transform: rotateY(76deg) translateZ(100px);
   transform-origin: left;
 }
-/* Pared derecha */
+/* Right wall */
 .right {
   transform: rotateY(-76deg) translateZ(100px);
   transform-origin: right;
 }
-/* Fondo */
+/* Background */
 .back {
   transform: translateZ(-400px);
 }
-/* Centro vacío */
+/* Center hole */
 .center-hole {
   position: absolute;
   width: 800px;
@@ -203,7 +221,7 @@ body {
   transform: translate(-50%, -50%);
   text-align: start;
   z-index: 10;
-  pointer-events: none; /* importante */
+  pointer-events: none; /* important */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -279,7 +297,7 @@ body {
 
   animation: flicker 6s infinite;
 }
-/* LINEA ESCANER */
+/* SCANER LINE */
 .human-wireframe-box::before {
   content: "";
 
@@ -345,7 +363,7 @@ body {
   z-index: 1;
 }
 
-/* ANIMACION */
+/* ANIMATION */
 @keyframes flicker {
   0% { opacity: 1; }
   2% { opacity: 0.8; }
@@ -559,8 +577,7 @@ align-items:flex-start;
 padding-top: 20px;
 }
 
-/* LINEA */
-
+/* LINE */
 .timeline::before{
 content:"";
 position:absolute;
@@ -576,7 +593,6 @@ animation:cyberNoise 5s infinite;
 }
 
 /* ITEM */
-
 .timeline-item{
 position:relative;
 width:220px;
@@ -586,7 +602,6 @@ align-items:center;
 }
 
 /* CARD */
-
 .timeline-card{
 border:1px solid rgba(44,245,169,.4);
 padding:18px;
