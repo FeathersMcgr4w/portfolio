@@ -35,8 +35,8 @@ function renderPage(){
             <div class="project-icon">
                 <img src="${
                     isOnion
-                    ? '../img/icon/tor_onion_icon.svg'
-                    : '../img/abstract_geometry/abstract_geometric_globe.svg'
+                    ? '../img/icon/tor_onion_icon.webp'
+                    : '../img/abstract_geometry/abstract_geometric_globe.webp'
                 }">
             </div>
 
